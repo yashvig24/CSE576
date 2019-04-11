@@ -217,18 +217,7 @@ void MainWindow::Convolution(double** image, double *kernel, int kernelWidth, in
     Image = image;
     QImage *img = new QImage(imageWidth, imageHeight, QImage::Format_ARGB32);
     ConvertDouble2QImage(img);
-///
-    // QLabel myLabel;
-    // myLabel.setPixmap(QPixmap::fromImage(*img));
-    // myLabel.show();    
-    // imageObject = new QImage();
-    // imageObject->load(imagePath);
-    // dimg = QPixmap::fromImage(img);
-    // scene = new QGraphicsScene(this);
-    // scene->addPixmap(dimg);
-    // scene->setSceneRect(dimg.rect());
-    // ui->graphicsView->setScene(scene);
-///
+
     int height = img->height();
     int width = img->width();
     int khh = (kernelHeight / 2); //kernelHalfHeight
