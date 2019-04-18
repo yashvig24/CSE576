@@ -4,6 +4,8 @@
 #include <QtGui>
 #include <iostream>
 #include <typeinfo>       // operator typeid
+#include <limits>
+
 
 //using namespace std;
 /***********************************************************************
@@ -647,6 +649,60 @@ void MainWindow::RandomSeedImage(double** image, int num_clusters)
  * num_clusters: number of clusters into which the image is to be clustered
 */
 {
+    // define the parameters
+    double epsilon = 30;
+    int max_iter = 100;
+    int img_size = imageHeight*imageWidth;
+    // std::cout << "hi" << std::endl;
+    ImagePoints imgpoints = ImagePoints(image, img_size);
+    // std::cout << "hi" << std::endl;
+    KmeanCluster kclusters = KmeanCluster(image, img_size, num_clusters);
+    // std::cout << "hi" << std::endl;
+    kclusters.RandInit();
+    // std::cout << "hi" << std::endl;
+    std::cout << kclusters.num_clusters << std::endl;
+
+    int round = 0;
+    int c_id = 0;
+    double min, dist;
+    while(round < max_iter) {
+        // iterate over all points:
+        for (int i=0; i<img_size; i++) {
+            c_id = 0;
+            min = kclusters.L1Dist(image[i], kclusters.centers[0]);
+            for (int n=1; n < num_clusters; n++) {
+                dist = kclusters.L1Dist(image[i], kclusters.centers[n]);
+                if (dist < min) {
+                    c_id = n;
+                    min = dist;
+                }
+            }
+            imgpoints.belongto[i] = c_id;
+            // std::cout << imgpoints.belongto[i] << std::endl;
+        }
+
+        for (int i=0; i<img_size; i++) {
+            c_id = imgpoints.belongto[i];
+            kclusters.numOfPixel[c_id] += 1;
+            for (int k=0; k<3; k++)
+                kclusters.sumValue[c_id][k] += image[i][k]; 
+        }
+        kclusters.UpdateCenter();
+        if (kclusters.IsBad()) {
+            // continue;
+            kclusters.RandInit();
+            round = 0;
+        }
+        kclusters.ResetSum();
+        round++;
+    }
+
+    for (int i=0; i<img_size; i++) {
+        int c_id = imgpoints.belongto[i];
+        for (int k=0; k<3; k++) {
+            image[i][k] = kclusters.centers[c_id][k];
+        }
+    }    
     // Add your code here
 }
 
@@ -661,6 +717,59 @@ void MainWindow::PixelSeedImage(double** image, int num_clusters)
  * num_clusters: number of clusters into which the image is to be clustered
 */
 {
+    double epsilon = 30;
+    int max_iter = 100;
+    int img_size = imageHeight*imageWidth;
+    // std::cout << "hi" << std::endl;
+    ImagePoints imgpoints = ImagePoints(image, img_size);
+    // std::cout << "hi" << std::endl;
+    KmeanCluster kclusters = KmeanCluster(image, img_size, num_clusters);
+    // std::cout << "hi" << std::endl;
+    kclusters.PixelInit();
+    // std::cout << "hi" << std::endl;
+    std::cout << kclusters.num_clusters << std::endl;
+
+    int round = 0;
+    int c_id = 0;
+    double min, dist;
+    while(round < max_iter) {
+        // iterate over all points:
+        for (int i=0; i<img_size; i++) {
+            c_id = 0;
+            min = kclusters.L1Dist(image[i], kclusters.centers[0]);
+            for (int n=1; n < num_clusters; n++) {
+                dist = kclusters.L1Dist(image[i], kclusters.centers[n]);
+                if (dist < min) {
+                    c_id = n;
+                    min = dist;
+                }
+            }
+            imgpoints.belongto[i] = c_id;
+            // std::cout << imgpoints.belongto[i] << std::endl;
+        }
+
+        for (int i=0; i<img_size; i++) {
+            c_id = imgpoints.belongto[i];
+            kclusters.numOfPixel[c_id] += 1;
+            for (int k=0; k<3; k++)
+                kclusters.sumValue[c_id][k] += image[i][k]; 
+        }
+        kclusters.UpdateCenter();
+        if (kclusters.IsBad()) {
+            // continue;
+            kclusters.PixelInit();
+            round = 0;
+        }
+        kclusters.ResetSum();
+        round++;
+    }
+
+    for (int i=0; i<img_size; i++) {
+        int c_id = imgpoints.belongto[i];
+        for (int k=0; k<3; k++) {
+            image[i][k] = kclusters.centers[c_id][k];
+        }
+    }     
     // Add your code here
 }
 
