@@ -27,9 +27,7 @@ void MainWindow::BlackWhiteImage(QImage *image)
             double blue = (double) qBlue(pixel);
 
             // Compute intensity from colors - these are common weights
-//             double intensity = 0.3*red + 0.6*green + 0.1*blue;
-            double intensity = red;
-
+            double intensity = 0.3*red + 0.6*green + 0.1*blue;
             image->setPixel(c, r, qRgb( (int) intensity, (int) intensity, (int) intensity));
         }
 }
@@ -466,18 +464,21 @@ void MainWindow::SobelImage(double** image)
     double** My = ImageCopy(image);
     Convolution(Mx, gx, 3, 3, false);
     Convolution(My, gy, 3, 3, false);
-    double** Mag = ImageCopy(image);
-    double** Ori = ImageCopy(image);
+    // double** Mag = ImageCopy(image);
+    // double** Ori = ImageCopy(image);
     double mag = 0;
     double orien = 0;    
+    // double rgbX[3] = {0.0, 0.0, 0.0};
+    // double rgbY[3] = {0.0, 0.0, 0.0};
     for (int i = 0; i < imageWidth*imageHeight; i++) {
-        for (int k = 0; k < 3; k++) {
-            Mag[i][k] = sqrt((pow(Mx[i][k], 2) + pow(My[i][k],2)));
-            Ori[i][k] = atan2(-My[i][k], Mx[i][k]);
-            mag = Mag[i][k];
-            orien = Ori[i][k];
-            // image[i][k] = 20*orien + 128 ;
-        }
+        // for (int k = 0; k < 3; k++) {
+        //     rgbX[k] = Mx[i][k]
+        //     Mag[i][k] = sqrt((pow(Mx[i][k], 2) + pow(My[i][k],2)));
+        // }
+        double magX = 0.3*Mx[i][0] + 0.6*Mx[i][1] + 0.1*Mx[i][2];
+        double magY = 0.3*My[i][0] + 0.6*My[i][1] + 0.1*My[i][2];
+        mag = sqrt(magX*magX + magY*magY);
+        orien = atan2(magY, magX);
         image[i][0] = mag*4.0*((sin(orien) + 1.0)/2.0);
         image[i][1] = mag*4.0*((cos(orien) + 1.0)/2.0);
         image[i][2] = mag*4.0 - image[i][0] - image[i][1];        
@@ -495,7 +496,7 @@ void MainWindow::SobelImage(double** image)
 **************************************************/
 
 // Compute the RGB values at a given point in an image using bilinear interpolation.
-void MainWindow::BilinearInterpolation(double** image, double x1, double y1, double rgb[3])
+void MainWindow::BilinearInterpolation(double** image, double x_s, double y_s, double rgb[3])
 /*
  * image: input image in matrix form of size (imageWidth*imageHeight)*3 having double values
  * x: x-coordinate (corresponding to columns) of the position whose RGB values are to be found
@@ -503,25 +504,33 @@ void MainWindow::BilinearInterpolation(double** image, double x1, double y1, dou
  * rgb[3]: array where the computed RGB values are to be stored
 */
 {
-    std::cout << "hi" << std::endl;
-    int x = (int) y1;
-    int y = (int) x1;
-    std::cout << typeid(x).name() << std::endl;
+    double x = y_s;
+    double y = x_s;
+    int x1 = static_cast<int>(floor(x));
+    int y1 = static_cast<int>(floor(y));
+    int x2 = static_cast<int>(ceil(x+0.0000001));
+    int y2 = static_cast<int>(ceil(y+0.0000001));
 
-    double* Pixel_Left = getPixel(image, x, y-1);
-    double* Pixel_Right = getPixel(image, x, y+1);
-    double* Pixel_Up = getPixel(image, x-1, y);
-    double* Pixel_Down = getPixel(image, x+1, y);
-    for (int k=0; k<3; k++)
-        std::cout << Pixel_Left[k] << std::endl;
-
-    if (x < 0 || x >= imageHeight || y < 0 || y >= imageWidth) 
-        rgb[0] = rgb[1] = rgb[2] = 0.0;
-    else {
-        rgb[0] = image[x*imageWidth + y][0];
-        rgb[1] = image[x*imageWidth + y][1];
-        rgb[2] = image[x*imageWidth + y][2];
+    //     std::cout << typeid(x).name() << std::endl;
+    // std::cout << "x:" << x << "y:" << y << std::endl;
+    double* Pixel_11 = getPixel(image, x1, y1);
+    double* Pixel_12 = getPixel(image, x1, y2);
+    double* Pixel_21 = getPixel(image, x2, y1);
+    double* Pixel_22 = getPixel(image, x2, y2);
+    // for (int k=0; k<3; k++)
+    //     std::cout << Pixel_11[k] << std::endl;
+    for (int i=0; i<3; i++) {
+        rgb[i] = (1 / ((x2-x1)*(y2-y1))) * 
+                (((x2-x)*Pixel_11[i]+(x-x1)*Pixel_21[i])*(y2-y) +
+                 ((x2-x)*Pixel_12[i]+(x-x1)*Pixel_22[i])*(y-y1));
     }
+    // if (x < 0 || x >= imageHeight || y < 0 || y >= imageWidth) 
+    //     rgb[0] = rgb[1] = rgb[2] = 0.0;
+    // else {
+    //     rgb[0] = image[x*imageWidth + y][0];
+    //     rgb[1] = image[x*imageWidth + y][1];
+    //     rgb[2] = image[x*imageWidth + y][2];
+    // }
         // Add your code here
 }
 
@@ -579,7 +588,52 @@ void MainWindow::FindPeaksImage(double** image, double thres)
  * thres: threshold value for magnitude
 */
 {
-    // Add your code here
+    double gx[9] = 
+    {
+        -1.0, 0.0, 1.0,
+        -2.0, 0.0, 2.0,
+        -1.0, 0.0, 1.0 
+    }; 
+    double gy[9] = 
+    {
+        -1.0, -2.0, -1.0,
+        0.0, 0.0, 0.0,
+        1.0, 2.0, 1.0 
+    }; 
+    double** Mx = ImageCopy(image);
+    double** My = ImageCopy(image);
+    Convolution(Mx, gx, 3, 3, false);
+    Convolution(My, gy, 3, 3, false);
+    double mag = 0;
+    double orien = 0;    
+    for (int i = 0; i < imageWidth*imageHeight; i++) {
+        double magX = 0.3*Mx[i][0] + 0.6*Mx[i][1] + 0.1*Mx[i][2];
+        double magY = 0.3*My[i][0] + 0.6*My[i][1] + 0.1*My[i][2];
+        mag = sqrt(magX*magX + magY*magY);
+        orien = atan2(magY, magX);
+
+        int x = i%imageWidth; // column
+        int y = i/imageWidth; // row
+        double e0x = x + 1*cos(orien+M_PI/2.0);
+        double e0y = y + 1*sin(orien+M_PI/2.0);
+        double e1x = x + 1*cos(orien-M_PI/2.0);
+        double e1y = y + 1*sin(orien-M_PI/2.0);
+        double rgb0[3] = {0.0,0.0,0.0};
+        double rgb1[3] = {0.0,0.0,0.0};
+        BilinearInterpolation(image, e0x, e0y, rgb0);
+        BilinearInterpolation(image, e1x, e1y, rgb1);
+        double intensity0 = 0.3*rgb0[0] + 0.6*rgb0[1] + 0.1*rgb0[2];
+        double intensity1 = 0.3*rgb1[0] + 0.6*rgb1[1] + 0.1*rgb1[2];
+
+        if (mag > thres && mag > intensity0 && mag > intensity1) {
+            for (int k=0; k<3; k++)
+                image[i][k] = 255;
+        }   
+        else {
+            for (int k=0; k<3; k++)
+                image[i][k] = 0;
+        }   
+    }    
 }
 
 /**************************************************
