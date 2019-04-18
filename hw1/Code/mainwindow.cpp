@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QtGui>
 #include <QFileDialog>
+#include <iostream>
 
 static const QSize resultSize(640, 480);
 
@@ -308,8 +309,7 @@ void MainWindow::GaussianBlurImage()
         SeparableGaussianBlurImage(Image, sigma);
     else
         GaussianBlurImage(Image, sigma);
-    ConvertDouble2QImage(&outImage);
-
+    ConvertDouble2QImage(&outImage); 
     DrawDisplayImage();
 }
 
@@ -468,4 +468,56 @@ void MainWindow::BilateralImage()
     ConvertDouble2QImage(&outImage);
 
     DrawDisplayImage();
+}
+
+
+double** MainWindow::ImageCopy(double** image) {
+    double** result = new double* [imageWidth*imageHeight];
+    for (int i = 0; i < imageWidth*imageHeight; i++) {
+        result[i] = new double[3];
+        for (int k = 0; k < 3; k++)
+            result[i][k] = image[i][k];
+    }
+    return result;
+}
+
+double** MainWindow::PaddingImage(double** image, int kernelWidth, int kernelHeight) {
+/*
+ * return a padding image
+*/    
+    int khh = (kernelHeight / 2); //kernelHalfHeight
+    int khw = (kernelWidth / 2); //kernelHalfWidth
+    int new_width = imageWidth + 2 * khw;
+    int new_height = imageHeight + 2 * khh;
+    // std::cout << "imageWidth: " << imageWidth << " imageHeight: " << imageHeight<< std::endl;
+    // std::cout << "new_width: " << new_width << " new_height: " << new_height<< std::endl;
+    double** image_pad = new double* [new_height*new_width];
+    for (int i = 0; i < new_height*new_width; i++) {
+        image_pad[i] = new double[3];
+        image_pad[i][0] = image_pad[i][1] = image_pad[i][2] = 0.0;
+    }
+    // std::cout << "2" << image_pad << std::endl;
+    for (int i = 0; i < imageHeight; i++) {
+        int i_pad = i + khh;
+        for (int j = 0; j < imageWidth; j++) {
+            int j_pad = j + khw;
+//            std::cout << "debug" << std::endl;
+            image_pad[i_pad*new_width + j_pad][0] = image[i*imageWidth + j][0];
+            image_pad[i_pad*new_width + j_pad][1] = image[i*imageWidth + j][1];
+            image_pad[i_pad*new_width + j_pad][2] = image[i*imageWidth + j][2];
+        }
+    }
+    // std::cout << "3" << std::endl;
+    return image_pad;
+}
+
+double* MainWindow::getPixel(double** image, int x, int y) {
+    double* rgb;
+    if (x < 0 || x >= imageHeight || y < 0 || y >= imageWidth) {
+        rgb = new double[3];
+        rgb[0] = rgb[1] = rgb[2] = 0.0;
+    }
+    else 
+        rgb = image[x * imageWidth + y];
+    return rgb;
 }

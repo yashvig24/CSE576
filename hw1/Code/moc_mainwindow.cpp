@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[34];
-    char stringdata0[426];
+    QByteArrayData data[43];
+    char stringdata0[504];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -32,52 +32,63 @@ struct qt_meta_stringdata_MainWindow_t {
 static const qt_meta_stringdata_MainWindow_t qt_meta_stringdata_MainWindow = {
     {
 QT_MOC_LITERAL(0, 0, 10), // "MainWindow"
-QT_MOC_LITERAL(1, 11, 9), // "OpenImage"
-QT_MOC_LITERAL(2, 21, 0), // ""
-QT_MOC_LITERAL(3, 22, 9), // "SaveImage"
-QT_MOC_LITERAL(4, 32, 16), // "SaveDisplayImage"
-QT_MOC_LITERAL(5, 49, 10), // "ResetImage"
-QT_MOC_LITERAL(6, 60, 11), // "ToggleImage"
-QT_MOC_LITERAL(7, 72, 8), // "AddNoise"
-QT_MOC_LITERAL(8, 81, 15), // "BlackWhiteImage"
-QT_MOC_LITERAL(9, 97, 13), // "MeanBlurImage"
-QT_MOC_LITERAL(10, 111, 17), // "GaussianBlurImage"
-QT_MOC_LITERAL(11, 129, 17), // "FirstDerivImage_x"
-QT_MOC_LITERAL(12, 147, 17), // "FirstDerivImage_y"
-QT_MOC_LITERAL(13, 165, 16), // "SecondDerivImage"
-QT_MOC_LITERAL(14, 182, 12), // "SharpenImage"
-QT_MOC_LITERAL(15, 195, 10), // "SobelImage"
-QT_MOC_LITERAL(16, 206, 9), // "HalfImage"
-QT_MOC_LITERAL(17, 216, 11), // "RotateImage"
-QT_MOC_LITERAL(18, 228, 10), // "Brightness"
-QT_MOC_LITERAL(19, 239, 3), // "val"
-QT_MOC_LITERAL(20, 243, 4), // "Zoom"
-QT_MOC_LITERAL(21, 248, 6), // "Scroll"
-QT_MOC_LITERAL(22, 255, 14), // "BilateralImage"
-QT_MOC_LITERAL(23, 270, 14), // "FindPeaksImage"
-QT_MOC_LITERAL(24, 285, 11), // "MedianImage"
-QT_MOC_LITERAL(25, 297, 10), // "HoughImage"
-QT_MOC_LITERAL(26, 308, 11), // "SmartKMeans"
-QT_MOC_LITERAL(27, 320, 15), // "RandomSeedImage"
-QT_MOC_LITERAL(28, 336, 14), // "PixelSeedImage"
-QT_MOC_LITERAL(29, 351, 18), // "HistogramSeedImage"
-QT_MOC_LITERAL(30, 370, 20), // "ConvertQImage2Double"
-QT_MOC_LITERAL(31, 391, 5), // "image"
-QT_MOC_LITERAL(32, 397, 20), // "ConvertDouble2QImage"
-QT_MOC_LITERAL(33, 418, 7) // "QImage*"
+QT_MOC_LITERAL(1, 11, 8), // "getPixel"
+QT_MOC_LITERAL(2, 20, 7), // "double*"
+QT_MOC_LITERAL(3, 28, 0), // ""
+QT_MOC_LITERAL(4, 29, 8), // "double**"
+QT_MOC_LITERAL(5, 38, 5), // "image"
+QT_MOC_LITERAL(6, 44, 1), // "x"
+QT_MOC_LITERAL(7, 46, 1), // "y"
+QT_MOC_LITERAL(8, 48, 9), // "ImageCopy"
+QT_MOC_LITERAL(9, 58, 12), // "PaddingImage"
+QT_MOC_LITERAL(10, 71, 11), // "kernelWidth"
+QT_MOC_LITERAL(11, 83, 12), // "kernelHeight"
+QT_MOC_LITERAL(12, 96, 9), // "OpenImage"
+QT_MOC_LITERAL(13, 106, 9), // "SaveImage"
+QT_MOC_LITERAL(14, 116, 16), // "SaveDisplayImage"
+QT_MOC_LITERAL(15, 133, 10), // "ResetImage"
+QT_MOC_LITERAL(16, 144, 11), // "ToggleImage"
+QT_MOC_LITERAL(17, 156, 8), // "AddNoise"
+QT_MOC_LITERAL(18, 165, 15), // "BlackWhiteImage"
+QT_MOC_LITERAL(19, 181, 13), // "MeanBlurImage"
+QT_MOC_LITERAL(20, 195, 17), // "GaussianBlurImage"
+QT_MOC_LITERAL(21, 213, 17), // "FirstDerivImage_x"
+QT_MOC_LITERAL(22, 231, 17), // "FirstDerivImage_y"
+QT_MOC_LITERAL(23, 249, 16), // "SecondDerivImage"
+QT_MOC_LITERAL(24, 266, 12), // "SharpenImage"
+QT_MOC_LITERAL(25, 279, 10), // "SobelImage"
+QT_MOC_LITERAL(26, 290, 9), // "HalfImage"
+QT_MOC_LITERAL(27, 300, 11), // "RotateImage"
+QT_MOC_LITERAL(28, 312, 10), // "Brightness"
+QT_MOC_LITERAL(29, 323, 3), // "val"
+QT_MOC_LITERAL(30, 327, 4), // "Zoom"
+QT_MOC_LITERAL(31, 332, 6), // "Scroll"
+QT_MOC_LITERAL(32, 339, 14), // "BilateralImage"
+QT_MOC_LITERAL(33, 354, 14), // "FindPeaksImage"
+QT_MOC_LITERAL(34, 369, 11), // "MedianImage"
+QT_MOC_LITERAL(35, 381, 10), // "HoughImage"
+QT_MOC_LITERAL(36, 392, 11), // "SmartKMeans"
+QT_MOC_LITERAL(37, 404, 15), // "RandomSeedImage"
+QT_MOC_LITERAL(38, 420, 14), // "PixelSeedImage"
+QT_MOC_LITERAL(39, 435, 18), // "HistogramSeedImage"
+QT_MOC_LITERAL(40, 454, 20), // "ConvertQImage2Double"
+QT_MOC_LITERAL(41, 475, 20), // "ConvertDouble2QImage"
+QT_MOC_LITERAL(42, 496, 7) // "QImage*"
 
     },
-    "MainWindow\0OpenImage\0\0SaveImage\0"
-    "SaveDisplayImage\0ResetImage\0ToggleImage\0"
-    "AddNoise\0BlackWhiteImage\0MeanBlurImage\0"
-    "GaussianBlurImage\0FirstDerivImage_x\0"
-    "FirstDerivImage_y\0SecondDerivImage\0"
-    "SharpenImage\0SobelImage\0HalfImage\0"
-    "RotateImage\0Brightness\0val\0Zoom\0Scroll\0"
-    "BilateralImage\0FindPeaksImage\0MedianImage\0"
-    "HoughImage\0SmartKMeans\0RandomSeedImage\0"
-    "PixelSeedImage\0HistogramSeedImage\0"
-    "ConvertQImage2Double\0image\0"
+    "MainWindow\0getPixel\0double*\0\0double**\0"
+    "image\0x\0y\0ImageCopy\0PaddingImage\0"
+    "kernelWidth\0kernelHeight\0OpenImage\0"
+    "SaveImage\0SaveDisplayImage\0ResetImage\0"
+    "ToggleImage\0AddNoise\0BlackWhiteImage\0"
+    "MeanBlurImage\0GaussianBlurImage\0"
+    "FirstDerivImage_x\0FirstDerivImage_y\0"
+    "SecondDerivImage\0SharpenImage\0SobelImage\0"
+    "HalfImage\0RotateImage\0Brightness\0val\0"
+    "Zoom\0Scroll\0BilateralImage\0FindPeaksImage\0"
+    "MedianImage\0HoughImage\0SmartKMeans\0"
+    "RandomSeedImage\0PixelSeedImage\0"
+    "HistogramSeedImage\0ConvertQImage2Double\0"
     "ConvertDouble2QImage\0QImage*"
 };
 #undef QT_MOC_LITERAL
@@ -88,7 +99,7 @@ static const uint qt_meta_data_MainWindow[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      29,   14, // methods
+      32,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -96,37 +107,43 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  159,    2, 0x08 /* Private */,
-       3,    0,  160,    2, 0x08 /* Private */,
-       4,    0,  161,    2, 0x08 /* Private */,
-       5,    0,  162,    2, 0x08 /* Private */,
-       6,    0,  163,    2, 0x08 /* Private */,
-       7,    0,  164,    2, 0x08 /* Private */,
-       8,    0,  165,    2, 0x08 /* Private */,
-       9,    0,  166,    2, 0x08 /* Private */,
-      10,    0,  167,    2, 0x08 /* Private */,
-      11,    0,  168,    2, 0x08 /* Private */,
-      12,    0,  169,    2, 0x08 /* Private */,
-      13,    0,  170,    2, 0x08 /* Private */,
-      14,    0,  171,    2, 0x08 /* Private */,
-      15,    0,  172,    2, 0x08 /* Private */,
-      16,    0,  173,    2, 0x08 /* Private */,
-      17,    0,  174,    2, 0x08 /* Private */,
-      18,    1,  175,    2, 0x08 /* Private */,
-      20,    1,  178,    2, 0x08 /* Private */,
-      21,    1,  181,    2, 0x08 /* Private */,
-      22,    0,  184,    2, 0x08 /* Private */,
-      23,    0,  185,    2, 0x08 /* Private */,
-      24,    0,  186,    2, 0x08 /* Private */,
-      25,    0,  187,    2, 0x08 /* Private */,
-      26,    0,  188,    2, 0x08 /* Private */,
-      27,    0,  189,    2, 0x08 /* Private */,
-      28,    0,  190,    2, 0x08 /* Private */,
-      29,    0,  191,    2, 0x08 /* Private */,
-      30,    1,  192,    2, 0x08 /* Private */,
-      32,    1,  195,    2, 0x08 /* Private */,
+       1,    3,  174,    3, 0x08 /* Private */,
+       8,    1,  181,    3, 0x08 /* Private */,
+       9,    3,  184,    3, 0x08 /* Private */,
+      12,    0,  191,    3, 0x08 /* Private */,
+      13,    0,  192,    3, 0x08 /* Private */,
+      14,    0,  193,    3, 0x08 /* Private */,
+      15,    0,  194,    3, 0x08 /* Private */,
+      16,    0,  195,    3, 0x08 /* Private */,
+      17,    0,  196,    3, 0x08 /* Private */,
+      18,    0,  197,    3, 0x08 /* Private */,
+      19,    0,  198,    3, 0x08 /* Private */,
+      20,    0,  199,    3, 0x08 /* Private */,
+      21,    0,  200,    3, 0x08 /* Private */,
+      22,    0,  201,    3, 0x08 /* Private */,
+      23,    0,  202,    3, 0x08 /* Private */,
+      24,    0,  203,    3, 0x08 /* Private */,
+      25,    0,  204,    3, 0x08 /* Private */,
+      26,    0,  205,    3, 0x08 /* Private */,
+      27,    0,  206,    3, 0x08 /* Private */,
+      28,    1,  207,    3, 0x08 /* Private */,
+      30,    1,  210,    3, 0x08 /* Private */,
+      31,    1,  213,    3, 0x08 /* Private */,
+      32,    0,  216,    3, 0x08 /* Private */,
+      33,    0,  217,    3, 0x08 /* Private */,
+      34,    0,  218,    3, 0x08 /* Private */,
+      35,    0,  219,    3, 0x08 /* Private */,
+      36,    0,  220,    3, 0x08 /* Private */,
+      37,    0,  221,    3, 0x08 /* Private */,
+      38,    0,  222,    3, 0x08 /* Private */,
+      39,    0,  223,    3, 0x08 /* Private */,
+      40,    1,  224,    3, 0x08 /* Private */,
+      41,    1,  227,    3, 0x08 /* Private */,
 
  // slots: parameters
+    0x80000000 | 2, 0x80000000 | 4, QMetaType::Int, QMetaType::Int,    5,    6,    7,
+    0x80000000 | 4, 0x80000000 | 4,    5,
+    0x80000000 | 4, 0x80000000 | 4, QMetaType::Int, QMetaType::Int,    5,   10,   11,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -143,9 +160,9 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   19,
-    QMetaType::Void, QMetaType::Int,   19,
-    QMetaType::Void, QMetaType::Int,   19,
+    QMetaType::Void, QMetaType::Int,   29,
+    QMetaType::Void, QMetaType::Int,   29,
+    QMetaType::Void, QMetaType::Int,   29,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -154,8 +171,8 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QImage,   31,
-    QMetaType::Void, 0x80000000 | 33,   31,
+    QMetaType::Void, QMetaType::QImage,    5,
+    QMetaType::Void, 0x80000000 | 42,    5,
 
        0        // eod
 };
@@ -166,35 +183,41 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         auto *_t = static_cast<MainWindow *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->OpenImage(); break;
-        case 1: _t->SaveImage(); break;
-        case 2: _t->SaveDisplayImage(); break;
-        case 3: _t->ResetImage(); break;
-        case 4: _t->ToggleImage(); break;
-        case 5: _t->AddNoise(); break;
-        case 6: _t->BlackWhiteImage(); break;
-        case 7: _t->MeanBlurImage(); break;
-        case 8: _t->GaussianBlurImage(); break;
-        case 9: _t->FirstDerivImage_x(); break;
-        case 10: _t->FirstDerivImage_y(); break;
-        case 11: _t->SecondDerivImage(); break;
-        case 12: _t->SharpenImage(); break;
-        case 13: _t->SobelImage(); break;
-        case 14: _t->HalfImage(); break;
-        case 15: _t->RotateImage(); break;
-        case 16: _t->Brightness((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 17: _t->Zoom((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 18: _t->Scroll((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 19: _t->BilateralImage(); break;
-        case 20: _t->FindPeaksImage(); break;
-        case 21: _t->MedianImage(); break;
-        case 22: _t->HoughImage(); break;
-        case 23: _t->SmartKMeans(); break;
-        case 24: _t->RandomSeedImage(); break;
-        case 25: _t->PixelSeedImage(); break;
-        case 26: _t->HistogramSeedImage(); break;
-        case 27: _t->ConvertQImage2Double((*reinterpret_cast< QImage(*)>(_a[1]))); break;
-        case 28: _t->ConvertDouble2QImage((*reinterpret_cast< QImage*(*)>(_a[1]))); break;
+        case 0: { double* _r = _t->getPixel((*reinterpret_cast< double**(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3])));
+            if (_a[0]) *reinterpret_cast< double**>(_a[0]) = std::move(_r); }  break;
+        case 1: { double** _r = _t->ImageCopy((*reinterpret_cast< double**(*)>(_a[1])));
+            if (_a[0]) *reinterpret_cast< double***>(_a[0]) = std::move(_r); }  break;
+        case 2: { double** _r = _t->PaddingImage((*reinterpret_cast< double**(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3])));
+            if (_a[0]) *reinterpret_cast< double***>(_a[0]) = std::move(_r); }  break;
+        case 3: _t->OpenImage(); break;
+        case 4: _t->SaveImage(); break;
+        case 5: _t->SaveDisplayImage(); break;
+        case 6: _t->ResetImage(); break;
+        case 7: _t->ToggleImage(); break;
+        case 8: _t->AddNoise(); break;
+        case 9: _t->BlackWhiteImage(); break;
+        case 10: _t->MeanBlurImage(); break;
+        case 11: _t->GaussianBlurImage(); break;
+        case 12: _t->FirstDerivImage_x(); break;
+        case 13: _t->FirstDerivImage_y(); break;
+        case 14: _t->SecondDerivImage(); break;
+        case 15: _t->SharpenImage(); break;
+        case 16: _t->SobelImage(); break;
+        case 17: _t->HalfImage(); break;
+        case 18: _t->RotateImage(); break;
+        case 19: _t->Brightness((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 20: _t->Zoom((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 21: _t->Scroll((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 22: _t->BilateralImage(); break;
+        case 23: _t->FindPeaksImage(); break;
+        case 24: _t->MedianImage(); break;
+        case 25: _t->HoughImage(); break;
+        case 26: _t->SmartKMeans(); break;
+        case 27: _t->RandomSeedImage(); break;
+        case 28: _t->PixelSeedImage(); break;
+        case 29: _t->HistogramSeedImage(); break;
+        case 30: _t->ConvertQImage2Double((*reinterpret_cast< QImage(*)>(_a[1]))); break;
+        case 31: _t->ConvertDouble2QImage((*reinterpret_cast< QImage*(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -229,13 +252,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 29)
+        if (_id < 32)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 29;
+        _id -= 32;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 29)
+        if (_id < 32)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 29;
+        _id -= 32;
     }
     return _id;
 }

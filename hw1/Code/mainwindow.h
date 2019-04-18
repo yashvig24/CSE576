@@ -49,7 +49,7 @@ private:
     void SecondDerivImage(double** image, double sigma);
     void SharpenImage(double** image, double sigma, double alpha);
     void SobelImage(double** image);
-    void BilinearInterpolation(double** image, double x, double y, double rgb[3]);
+    void BilinearInterpolation(double** image, double x1, double y1, double rgb[3]);
     void RotateImage(double** image, double orien);
     void FindPeaksImage(double** image, double thres);
 
@@ -63,6 +63,9 @@ private:
 
 
 private slots:
+    double* getPixel(double** image, int x, int y);
+    double** ImageCopy(double** image);
+    double** PaddingImage(double** image, int kernelWidth, int kernelHeight);
     void OpenImage();
     void SaveImage();
     void SaveDisplayImage();

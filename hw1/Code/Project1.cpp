@@ -3,8 +3,9 @@
 #include "ui_mainwindow.h"
 #include <QtGui>
 #include <iostream>
+#include <typeinfo>       // operator typeid
 
-
+//using namespace std;
 /***********************************************************************
   This is the only file you need to change for your assignment. The
   other files control the UI (in case you want to make changes.)
@@ -205,6 +206,7 @@ void MainWindow::ConvertDouble2QImage(QImage *image)
 **************************************************/
 
 // Convolve the image with the kernel
+
 void MainWindow::Convolution(double** image, double *kernel, int kernelWidth, int kernelHeight, bool add)
 /*
  * image: input image in matrix form of size (imageWidth*imageHeight)*3 having double values
@@ -213,40 +215,71 @@ void MainWindow::Convolution(double** image, double *kernel, int kernelWidth, in
  * kernelHeight: height of the kernel
  * add: a boolean variable (taking values true or false)
 */
-{    
-    Image = image;
-    QImage *img = new QImage(imageWidth, imageHeight, QImage::Format_ARGB32);
-    ConvertDouble2QImage(img);
-
-    int height = img->height();
-    int width = img->width();
+{   
+//    std::cout << "hi" << std::endl;
+    double** image_pad = PaddingImage(image, kernelWidth, kernelHeight);
+    // std::cout << "hi" << std::endl;
     int khh = (kernelHeight / 2); //kernelHalfHeight
     int khw = (kernelWidth / 2); //kernelHalfWidth
+    int new_width = imageWidth + 2 * khw;
+    int new_height = imageHeight + 2 * khh;
 
-    QImage buffer = img->copy(-khw, -khh, width + 2*khw, height + 2*khh );
-
-    for (int r = 0; r < height; r++) {
-        for (int c = 0; c < width; c++) {
+    for (int r = 0; r < imageHeight; r++) {
+        for (int c = 0; c < imageWidth; c++) {
             double rgb[3];
             rgb[0] = rgb[1] = rgb[2] = 0.0;
             for(int rd = -khh; rd <= khh; rd++) {
-                for(int cd = -khw; cd <= khw; cd++)
-                {
-                     QRgb pixel = buffer.pixel(c + cd + khw, r + rd + khh);
-
-                     // Get the value of the kernel
-                     double weight = kernel[(rd + khh)*kernelWidth + cd + khw];
-
-                     rgb[0] += weight*(double) qRed(pixel);
-                     rgb[1] += weight*(double) qGreen(pixel);
-                     rgb[2] += weight*(double) qBlue(pixel);
+                int i_pad = r + rd + khh;
+                for(int cd = -khw; cd <= khw; cd++) {   
+                    int j_pad = c + cd + khw;
+                    double* pixel= image_pad[i_pad * new_width + j_pad];
+                    // Get the value of the kernel
+                    double weight = kernel[(rd + khh)*kernelWidth + cd + khw];
+                    rgb[0] += weight * pixel[0];
+                    rgb[1] += weight * pixel[1];
+                    rgb[2] += weight * pixel[2];
                 }
             }
-            img->setPixel(c, r, restrictColor(rgb[0],rgb[1],rgb[2]));
+            if (add) 
+                for (int k = 0; k < 3; k++)
+                    image[r*imageWidth + c][k] = rgb[k] + 128;
+            else
+                for (int k = 0; k < 3; k++)
+                    image[r*imageWidth + c][k] = rgb[k];   
         }
     }
-    ConvertQImage2Double(*img);
-    image = Image;
+
+    // Image = image;
+    // QImage *img = new QImage(imageWidth, imageHeight, QImage::Format_ARGB32);
+    // ConvertDouble2QImage(img);
+
+    // int height = img->height();
+    // int width = img->width();
+    // int khh = (kernelHeight / 2); //kernelHalfHeight
+    // int khw = (kernelWidth / 2); //kernelHalfWidth
+
+    // QImage buffer = img->copy(-khw, -khh, width + 2*khw, height + 2*khh );
+
+    // for (int r = 0; r < height; r++) {
+    //     for (int c = 0; c < width; c++) {
+    //         double rgb[3];
+    //         rgb[0] = rgb[1] = rgb[2] = 0.0;
+    //         for(int rd = -khh; rd <= khh; rd++) {
+    //             for(int cd = -khw; cd <= khw; cd++)
+    //             {
+    //                  QRgb pixel = buffer.pixel(c + cd + khw, r + rd + khh);
+    //                  // Get the value of the kernel
+    //                  double weight = kernel[(rd + khh)*kernelWidth + cd + khw];
+    //                  rgb[0] += weight*(double) qRed(pixel);
+    //                  rgb[1] += weight*(double) qGreen(pixel);
+    //                  rgb[2] += weight*(double) qBlue(pixel);
+    //             }
+    //         }
+    //         img->setPixel(c, r, restrictColor(rgb[0],rgb[1],rgb[2]));
+    //     }
+    // }
+    // ConvertQImage2Double(*img);
+    // image = Image;
 }
 
 /**************************************************
@@ -271,7 +304,17 @@ void MainWindow::GaussianBlurImage(double** image, double sigma)
             kernel[(rd + radius)*size + cd + radius] = exp(-(rd*rd + cd*cd ) / (2*sigma*sigma)) / (2*M_PI*sigma*sigma);
         }        
     }
+    NormalizeKernel(kernel, size, size);
     Convolution(image, kernel, size, size, false);
+
+//     kernel = new double [size];
+//     for(int cd=-radius; cd<=radius; cd++) {
+//         kernel[cd + radius] = exp(-cd*cd / (2*sigma*sigma)) / (2*M_PI*sigma*sigma);
+//     }
+//     NormalizeKernel(kernel, size, 1);
+// //    std::cout<< "h1" << endl;
+//     Convolution(image, kernel, size, 1, false);
+
     delete[] kernel;
 }
 
@@ -286,7 +329,22 @@ void MainWindow::SeparableGaussianBlurImage(double** image, double sigma)
  * sigma: standard deviation for the Gaussian kernel
 */
 {
-    // Add your code here
+    if (sigma <= 0) {
+        return;
+    }
+    int radius = 3 * (int) sigma;
+    int size = 2*radius + 1; // This is the size of the kernel
+    double *kernel = new double [size];
+    for(int cd=-radius; cd<=radius; cd++) {
+        kernel[cd + radius] = exp(-cd*cd / (2*sigma*sigma)) / (2*M_PI*sigma*sigma);
+    }
+    NormalizeKernel(kernel, size, 1);
+//    std::cout<< "h1" << endl;
+    Convolution(image, kernel, size, 1, false);
+//    std::cout<< "h2" << endl;
+    Convolution(image, kernel, 1, size, false);
+//    std::cout<< "h3" << endl;
+    delete[] kernel;
 }
 
 /********** TASK 4 (a) **********/
@@ -298,7 +356,13 @@ void MainWindow::FirstDerivImage_x(double** image, double sigma)
  * sigma: standard deviation for the Gaussian kernel
 */
 {
-    // Add your code here
+    if (sigma <= 0) {
+        return;
+    }
+    double kernel[3] = {-1.0, 0.0, 1.0};
+    Convolution(image, kernel, 3, 1, true);
+    GaussianBlurImage(image, sigma);
+    // delete[] kernel; // why this doesn't work?
 }
 
 /********** TASK 4 (b) **********/
@@ -310,7 +374,12 @@ void MainWindow::FirstDerivImage_y(double** image, double sigma)
  * sigma: standard deviation for the Gaussian kernel
 */
 {
-    // Add your code here
+    if (sigma <= 0) {
+        return;
+    }
+    double kernel[3] = {-1.0, 0.0, 1.0};
+    Convolution(image, kernel, 1, 3, true);
+    GaussianBlurImage(image, sigma); 
 }
 
 /********** TASK 4 (c) **********/
@@ -322,7 +391,16 @@ void MainWindow::SecondDerivImage(double** image, double sigma)
  * sigma: standard deviation for the Gaussian kernel
 */
 {
-    // Add your code here
+    if (sigma <= 0)
+        return;
+    double kernel[9] = 
+    {
+        0.0, 1.0, 0.0,
+        1.0, -4.0, 1.0,
+        0.0, 1.0, 0.0  
+    };
+    Convolution(image, kernel, 3, 3, true);
+    GaussianBlurImage(image, sigma); 
 }
 
 /**************************************************
@@ -336,8 +414,24 @@ void MainWindow::SharpenImage(double** image, double sigma, double alpha)
  * sigma: standard deviation for the Gaussian kernel
  * alpha: constant by which the second derivative image is to be multiplied to before subtracting it from the original image
 */
-{
-    // Add your code here
+{   
+    double** buffer = ImageCopy(image);
+    SecondDerivImage(buffer, sigma);
+    for (int i = 0; i < imageWidth*imageHeight; i++) {
+        for (int k = 0; k < 3; k++)
+            image[i][k] = image[i][k] - alpha * (buffer[i][k] - 128);
+    } 
+    // double original[9] = {0,0,0,0,1,0,0,0,0};
+    // double kernel[9] = 
+    // {
+    //     0.0, 1.0, 0.0,
+    //     1.0, -4.0, 1.0,
+    //     0.0, 1.0, 0.0  
+    // };  
+    // for (int i = 0; i < 9; i++) {
+    //     kernel[i] = original[i] - alpha* kernel[i];
+    // }
+    // Convolution(image, kernel, 3, 3, false);
 }
 
 /**************************************************
@@ -356,10 +450,44 @@ void MainWindow::SobelImage(double** image)
     // Use the following 3 lines of code to set the image pixel values after computing magnitude and orientation
     // Here 'mag' is the magnitude and 'orien' is the orientation angle in radians to be computed using atan2 function
     // (sin(orien) + 1)/2 converts the sine value to the range [0,1]. Similarly for cosine.
-
-    // image[r*imageWidth+c][0] = mag*4.0*((sin(orien) + 1.0)/2.0);
-    // image[r*imageWidth+c][1] = mag*4.0*((cos(orien) + 1.0)/2.0);
-    // image[r*imageWidth+c][2] = mag*4.0 - image[r*imageWidth+c][0] - image[r*imageWidth+c][1];
+    double gx[9] = 
+    {
+        -1.0, 0.0, 1.0,
+        -2.0, 0.0, 2.0,
+        -1.0, 0.0, 1.0 
+    }; 
+    double gy[9] = 
+    {
+        -1.0, -2.0, -1.0,
+        0.0, 0.0, 0.0,
+        1.0, 2.0, 1.0 
+    }; 
+    double** Mx = ImageCopy(image);
+    double** My = ImageCopy(image);
+    Convolution(Mx, gx, 3, 3, false);
+    Convolution(My, gy, 3, 3, false);
+    double** Mag = ImageCopy(image);
+    double** Ori = ImageCopy(image);
+    double mag = 0;
+    double orien = 0;    
+    for (int i = 0; i < imageWidth*imageHeight; i++) {
+        for (int k = 0; k < 3; k++) {
+            Mag[i][k] = sqrt((pow(Mx[i][k], 2) + pow(My[i][k],2)));
+            Ori[i][k] = atan2(-My[i][k], Mx[i][k]);
+            mag = Mag[i][k];
+            orien = Ori[i][k];
+            // image[i][k] = 20*orien + 128 ;
+        }
+        image[i][0] = mag*4.0*((sin(orien) + 1.0)/2.0);
+        image[i][1] = mag*4.0*((cos(orien) + 1.0)/2.0);
+        image[i][2] = mag*4.0 - image[i][0] - image[i][1];        
+    }
+    // std::cout << "Mag addr:" << Mag << std::endl;
+    // std::cout << "image_before addr:" << image << std::endl;
+    // image = Mag; 
+    // std::cout << "after addr:" << image << std::endl;
+    // std::cout << "Image addr:" << Image << std::endl;
+    // image = Ori;  
 }
 
 /**************************************************
@@ -367,7 +495,7 @@ void MainWindow::SobelImage(double** image)
 **************************************************/
 
 // Compute the RGB values at a given point in an image using bilinear interpolation.
-void MainWindow::BilinearInterpolation(double** image, double x, double y, double rgb[3])
+void MainWindow::BilinearInterpolation(double** image, double x1, double y1, double rgb[3])
 /*
  * image: input image in matrix form of size (imageWidth*imageHeight)*3 having double values
  * x: x-coordinate (corresponding to columns) of the position whose RGB values are to be found
@@ -375,7 +503,26 @@ void MainWindow::BilinearInterpolation(double** image, double x, double y, doubl
  * rgb[3]: array where the computed RGB values are to be stored
 */
 {
-    // Add your code here
+    std::cout << "hi" << std::endl;
+    int x = (int) y1;
+    int y = (int) x1;
+    std::cout << typeid(x).name() << std::endl;
+
+    double* Pixel_Left = getPixel(image, x, y-1);
+    double* Pixel_Right = getPixel(image, x, y+1);
+    double* Pixel_Up = getPixel(image, x-1, y);
+    double* Pixel_Down = getPixel(image, x+1, y);
+    for (int k=0; k<3; k++)
+        std::cout << Pixel_Left[k] << std::endl;
+
+    if (x < 0 || x >= imageHeight || y < 0 || y >= imageWidth) 
+        rgb[0] = rgb[1] = rgb[2] = 0.0;
+    else {
+        rgb[0] = image[x*imageWidth + y][0];
+        rgb[1] = image[x*imageWidth + y][1];
+        rgb[2] = image[x*imageWidth + y][2];
+    }
+        // Add your code here
 }
 
 /*******************************************************************************
@@ -390,8 +537,7 @@ void MainWindow::RotateImage(double** image, double orien)
 
     // Make a copy of the original image and then re-initialize the original image with 0
     double** buffer = new double* [imageWidth*imageHeight];
-    for (int i = 0; i < imageWidth*imageHeight; i++)
-    {
+    for (int i = 0; i < imageWidth*imageHeight; i++) {
         buffer[i] = new double [3];
         for(int j = 0; j < 3; j++)
             buffer[i][j] = image[i][j];
@@ -399,8 +545,7 @@ void MainWindow::RotateImage(double** image, double orien)
     }
 
     for (int r = 0; r < imageHeight; r++)
-       for (int c = 0; c < imageWidth; c++)
-       {
+       for (int c = 0; c < imageWidth; c++) {
             // Rotate around the center of the image
             double x0 = (double) (c - imageWidth/2);
             double y0 = (double) (r - imageHeight/2);
