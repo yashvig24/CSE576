@@ -6,6 +6,8 @@
 #include <typeinfo>       // operator typeid
 #include <limits>
 
+#include "cluster.h" // by Nansong Yi 
+
 
 //using namespace std;
 /***********************************************************************

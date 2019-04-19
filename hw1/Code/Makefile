@@ -54,10 +54,12 @@ OBJECTS_DIR   = ./
 
 SOURCES       = main.cpp \
 		mainwindow.cpp \
-		Project1.cpp moc_mainwindow.cpp
+		Project1.cpp \
+		cluster.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		Project1.o \
+		cluster.o \
 		moc_mainwindow.o
 DIST          = /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/spec_pre.prf \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/common/unix.conf \
@@ -231,6 +233,7 @@ DIST          = /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/spec_pre.p
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/qt_config.prf \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/linux-g++/qmake.conf \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/exclusive_builds.prf \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/toolchain.prf \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/default_pre.prf \
@@ -250,9 +253,11 @@ DIST          = /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/spec_pre.p
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/exceptions.prf \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/yacc.prf \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/lex.prf \
-		ImgFilter.pro mainwindow.h main.cpp \
+		ImgFilter.pro mainwindow.h \
+		cluster.h main.cpp \
 		mainwindow.cpp \
-		Project1.cpp
+		Project1.cpp \
+		cluster.cpp
 QMAKE_TARGET  = ImgFilter
 DESTDIR       = 
 TARGET        = ImgFilter
@@ -436,6 +441,7 @@ Makefile: ImgFilter.pro /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/linux-g++/q
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/qt_config.prf \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/linux-g++/qmake.conf \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/exclusive_builds.prf \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/toolchain.prf \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/default_pre.prf \
@@ -632,6 +638,7 @@ Makefile: ImgFilter.pro /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/linux-g++/q
 /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/qt_config.prf:
 /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/linux-g++/qmake.conf:
 /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/exclusive_builds.prf:
 /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/toolchain.prf:
 /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/default_pre.prf:
@@ -670,8 +677,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /home/nansong/Qt5.12.2/5.12.2/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp Project1.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h cluster.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp Project1.cpp cluster.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -1063,13 +1070,52 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qtabwidget.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qicon.h \
 		ui_mainwindow.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/QVariant \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QAction \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qaction.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qactiongroup.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QApplication \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qapplication.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qeventloop.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qguiapplication.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qinputmethod.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QCheckBox \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qcheckbox.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QDoubleSpinBox \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qspinbox.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qvalidator.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qregularexpression.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QFrame \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qframe.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QLabel \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qlabel.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QMenu \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qmenu.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QMenuBar \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qmenubar.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QPushButton \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QScrollBar \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qscrollbar.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QSlider \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qslider.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QSpinBox \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QStatusBar \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qstatusbar.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QToolBar \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qtoolbar.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QWidget \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/QtGui \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/QtGuiDepends \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/QtCore \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/QtCoreDepends \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qabstractanimation.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qabstracteventdispatcher.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qeventloop.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qabstractitemmodel.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qabstractnativeeventfilter.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qabstractproxymodel.h \
@@ -1087,7 +1133,6 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcborvalue.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qdatetime.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcborcommon.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qregularexpression.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/quuid.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcbormap.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcborstream.h \
@@ -1095,7 +1140,6 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcollator.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcommandlineoption.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcommandlineparser.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcoreapplication.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcryptographichash.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qdeadlinetimer.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qelapsedtimer.h \
@@ -1214,8 +1258,6 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qgenericmatrix.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qgenericplugin.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qgenericpluginfactory.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qguiapplication.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qinputmethod.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qiconengine.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qiconengineplugin.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qimageiohandler.h \
@@ -1282,7 +1324,6 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qtextdocumentwriter.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qtextlist.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qtexttable.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qvalidator.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qtguiversion.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QFileDialog \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qfiledialog.h \
@@ -1396,14 +1437,54 @@ Project1.o: Project1.cpp mainwindow.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qtouchdevice.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qtabwidget.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qicon.h \
+		cluster.h \
 		ui_mainwindow.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/QVariant \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QAction \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qaction.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qactiongroup.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QApplication \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qapplication.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcoreapplication.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qeventloop.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qdesktopwidget.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qguiapplication.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qinputmethod.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QCheckBox \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qcheckbox.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qabstractbutton.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QDoubleSpinBox \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qspinbox.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qvalidator.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qregularexpression.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QFrame \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qframe.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QLabel \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qlabel.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QMenu \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qmenu.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QMenuBar \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qmenubar.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QPushButton \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qpushbutton.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QScrollBar \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qscrollbar.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qabstractslider.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QSlider \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qslider.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QSpinBox \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QStatusBar \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qstatusbar.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QToolBar \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/qtoolbar.h \
+		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtWidgets/QWidget \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/QtGui \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/QtGuiDepends \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/QtCore \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/QtCoreDepends \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qabstractanimation.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qabstracteventdispatcher.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qeventloop.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qabstractitemmodel.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qabstractnativeeventfilter.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qabstractproxymodel.h \
@@ -1421,7 +1502,6 @@ Project1.o: Project1.cpp mainwindow.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcborvalue.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qdatetime.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcborcommon.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qregularexpression.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/quuid.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcbormap.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcborstream.h \
@@ -1429,7 +1509,6 @@ Project1.o: Project1.cpp mainwindow.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcollator.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcommandlineoption.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcommandlineparser.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcoreapplication.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qcryptographichash.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qdeadlinetimer.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtCore/qelapsedtimer.h \
@@ -1548,8 +1627,6 @@ Project1.o: Project1.cpp mainwindow.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qgenericmatrix.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qgenericplugin.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qgenericpluginfactory.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qguiapplication.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qinputmethod.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qiconengine.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qiconengineplugin.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qimageiohandler.h \
@@ -1616,9 +1693,11 @@ Project1.o: Project1.cpp mainwindow.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qtextdocumentwriter.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qtextlist.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qtexttable.h \
-		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qvalidator.h \
 		/home/nansong/Qt5.12.2/5.12.2/gcc_64/include/QtGui/qtguiversion.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Project1.o Project1.cpp
+
+cluster.o: cluster.cpp cluster.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o cluster.o cluster.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

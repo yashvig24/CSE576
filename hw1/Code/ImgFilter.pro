@@ -12,8 +12,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    Project1.cpp
+    Project1.cpp\
+    cluster.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+            cluster.h
 
 FORMS    += mainwindow.ui
