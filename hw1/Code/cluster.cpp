@@ -60,11 +60,21 @@ void KmeanCluster::ResetSum(){
     }
 }
 
+void KmeanCluster::ResetCluster(int id) {
+        numOfPixel[id] = 0;
+        for (int j = 0; j < 3; j++)
+        {
+            centers[id][j] = rand() % 256;
+            sumValue[id][j] = 0;
+        }
+}
+
 bool KmeanCluster::IsBad() {
-    int num=0;
+    int num = 0;
     for (int n=0; n<num_clusters; n++) {
         if (numOfPixel[n]<10) {
             num++;
+            ResetCluster(n);
         }
     }
     std::cout << "bad num = " << num << std::endl;

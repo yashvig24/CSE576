@@ -219,7 +219,12 @@ void MainWindow::Convolution(double** image, double *kernel, int kernelWidth, in
 */
 {   
 //    std::cout << "hi" << std::endl;
-    double** image_pad = PaddingImage(image, kernelWidth, kernelHeight);
+    // padding mode -> mode=0: zero-padding, mode=1: fixed padding.
+    if (kernelWidth%2==0 || kernelHeight%2==0) {
+        std::cout << "kernel not odd" << std::endl;
+        return;
+    }
+    double** image_pad = PaddingImage(image, kernelWidth, kernelHeight, 1);
     // std::cout << "hi" << std::endl;
     int khh = (kernelHeight / 2); //kernelHalfHeight
     int khw = (kernelWidth / 2); //kernelHalfWidth
@@ -228,11 +233,14 @@ void MainWindow::Convolution(double** image, double *kernel, int kernelWidth, in
 
     for (int r = 0; r < imageHeight; r++) {
         for (int c = 0; c < imageWidth; c++) {
+            
             double rgb[3];
             rgb[0] = rgb[1] = rgb[2] = 0.0;
+
             for(int rd = -khh; rd <= khh; rd++) {
                 int i_pad = r + rd + khh;
-                for(int cd = -khw; cd <= khw; cd++) {   
+                for(int cd = -khw; cd <= khw; cd++) { 
+                  
                     int j_pad = c + cd + khw;
                     double* pixel= image_pad[i_pad * new_width + j_pad];
                     // Get the value of the kernel
@@ -250,38 +258,6 @@ void MainWindow::Convolution(double** image, double *kernel, int kernelWidth, in
                     image[r*imageWidth + c][k] = rgb[k];   
         }
     }
-
-    // Image = image;
-    // QImage *img = new QImage(imageWidth, imageHeight, QImage::Format_ARGB32);
-    // ConvertDouble2QImage(img);
-
-    // int height = img->height();
-    // int width = img->width();
-    // int khh = (kernelHeight / 2); //kernelHalfHeight
-    // int khw = (kernelWidth / 2); //kernelHalfWidth
-
-    // QImage buffer = img->copy(-khw, -khh, width + 2*khw, height + 2*khh );
-
-    // for (int r = 0; r < height; r++) {
-    //     for (int c = 0; c < width; c++) {
-    //         double rgb[3];
-    //         rgb[0] = rgb[1] = rgb[2] = 0.0;
-    //         for(int rd = -khh; rd <= khh; rd++) {
-    //             for(int cd = -khw; cd <= khw; cd++)
-    //             {
-    //                  QRgb pixel = buffer.pixel(c + cd + khw, r + rd + khh);
-    //                  // Get the value of the kernel
-    //                  double weight = kernel[(rd + khh)*kernelWidth + cd + khw];
-    //                  rgb[0] += weight*(double) qRed(pixel);
-    //                  rgb[1] += weight*(double) qGreen(pixel);
-    //                  rgb[2] += weight*(double) qBlue(pixel);
-    //             }
-    //         }
-    //         img->setPixel(c, r, restrictColor(rgb[0],rgb[1],rgb[2]));
-    //     }
-    // }
-    // ConvertQImage2Double(*img);
-    // image = Image;
 }
 
 /**************************************************
@@ -308,15 +284,6 @@ void MainWindow::GaussianBlurImage(double** image, double sigma)
     }
     NormalizeKernel(kernel, size, size);
     Convolution(image, kernel, size, size, false);
-
-//     kernel = new double [size];
-//     for(int cd=-radius; cd<=radius; cd++) {
-//         kernel[cd + radius] = exp(-cd*cd / (2*sigma*sigma)) / (2*M_PI*sigma*sigma);
-//     }
-//     NormalizeKernel(kernel, size, 1);
-// //    std::cout<< "h1" << endl;
-//     Convolution(image, kernel, size, 1, false);
-
     delete[] kernel;
 }
 
@@ -341,11 +308,8 @@ void MainWindow::SeparableGaussianBlurImage(double** image, double sigma)
         kernel[cd + radius] = exp(-cd*cd / (2*sigma*sigma)) / (2*M_PI*sigma*sigma);
     }
     NormalizeKernel(kernel, size, 1);
-//    std::cout<< "h1" << endl;
     Convolution(image, kernel, size, 1, false);
-//    std::cout<< "h2" << endl;
     Convolution(image, kernel, 1, size, false);
-//    std::cout<< "h3" << endl;
     delete[] kernel;
 }
 
@@ -423,17 +387,6 @@ void MainWindow::SharpenImage(double** image, double sigma, double alpha)
         for (int k = 0; k < 3; k++)
             image[i][k] = image[i][k] - alpha * (buffer[i][k] - 128);
     } 
-    // double original[9] = {0,0,0,0,1,0,0,0,0};
-    // double kernel[9] = 
-    // {
-    //     0.0, 1.0, 0.0,
-    //     1.0, -4.0, 1.0,
-    //     0.0, 1.0, 0.0  
-    // };  
-    // for (int i = 0; i < 9; i++) {
-    //     kernel[i] = original[i] - alpha* kernel[i];
-    // }
-    // Convolution(image, kernel, 3, 3, false);
 }
 
 /**************************************************
@@ -468,31 +421,17 @@ void MainWindow::SobelImage(double** image)
     double** My = ImageCopy(image);
     Convolution(Mx, gx, 3, 3, false);
     Convolution(My, gy, 3, 3, false);
-    // double** Mag = ImageCopy(image);
-    // double** Ori = ImageCopy(image);
     double mag = 0;
     double orien = 0;    
-    // double rgbX[3] = {0.0, 0.0, 0.0};
-    // double rgbY[3] = {0.0, 0.0, 0.0};
     for (int i = 0; i < imageWidth*imageHeight; i++) {
-        // for (int k = 0; k < 3; k++) {
-        //     rgbX[k] = Mx[i][k]
-        //     Mag[i][k] = sqrt((pow(Mx[i][k], 2) + pow(My[i][k],2)));
-        // }
-        double magX = 0.3*Mx[i][0] + 0.6*Mx[i][1] + 0.1*Mx[i][2];
-        double magY = 0.3*My[i][0] + 0.6*My[i][1] + 0.1*My[i][2];
+        double magX = (0.3*Mx[i][0] + 0.6*Mx[i][1] + 0.1*Mx[i][2])/8;
+        double magY = (0.3*My[i][0] + 0.6*My[i][1] + 0.1*My[i][2])/8;
         mag = sqrt(magX*magX + magY*magY);
         orien = atan2(magY, magX);
         image[i][0] = mag*4.0*((sin(orien) + 1.0)/2.0);
         image[i][1] = mag*4.0*((cos(orien) + 1.0)/2.0);
         image[i][2] = mag*4.0 - image[i][0] - image[i][1];        
     }
-    // std::cout << "Mag addr:" << Mag << std::endl;
-    // std::cout << "image_before addr:" << image << std::endl;
-    // image = Mag; 
-    // std::cout << "after addr:" << image << std::endl;
-    // std::cout << "Image addr:" << Image << std::endl;
-    // image = Ori;  
 }
 
 /**************************************************
@@ -515,27 +454,16 @@ void MainWindow::BilinearInterpolation(double** image, double x_s, double y_s, d
     int x2 = static_cast<int>(ceil(x+0.0000001));
     int y2 = static_cast<int>(ceil(y+0.0000001));
 
-    //     std::cout << typeid(x).name() << std::endl;
-    // std::cout << "x:" << x << "y:" << y << std::endl;
     double* Pixel_11 = getPixel(image, x1, y1);
     double* Pixel_12 = getPixel(image, x1, y2);
     double* Pixel_21 = getPixel(image, x2, y1);
     double* Pixel_22 = getPixel(image, x2, y2);
-    // for (int k=0; k<3; k++)
-    //     std::cout << Pixel_11[k] << std::endl;
+
     for (int i=0; i<3; i++) {
         rgb[i] = (1 / ((x2-x1)*(y2-y1))) * 
                 (((x2-x)*Pixel_11[i]+(x-x1)*Pixel_21[i])*(y2-y) +
                  ((x2-x)*Pixel_12[i]+(x-x1)*Pixel_22[i])*(y-y1));
     }
-    // if (x < 0 || x >= imageHeight || y < 0 || y >= imageWidth) 
-    //     rgb[0] = rgb[1] = rgb[2] = 0.0;
-    // else {
-    //     rgb[0] = image[x*imageWidth + y][0];
-    //     rgb[1] = image[x*imageWidth + y][1];
-    //     rgb[2] = image[x*imageWidth + y][2];
-    // }
-        // Add your code here
 }
 
 /*******************************************************************************
@@ -722,14 +650,9 @@ void MainWindow::PixelSeedImage(double** image, int num_clusters)
     double epsilon = 30;
     int max_iter = 100;
     int img_size = imageHeight*imageWidth;
-    // std::cout << "hi" << std::endl;
     ImagePoints imgpoints = ImagePoints(image, img_size);
-    // std::cout << "hi" << std::endl;
     KmeanCluster kclusters = KmeanCluster(image, img_size, num_clusters);
-    // std::cout << "hi" << std::endl;
     kclusters.PixelInit();
-    // std::cout << "hi" << std::endl;
-    std::cout << kclusters.num_clusters << std::endl;
 
     int round = 0;
     int c_id = 0;
@@ -747,7 +670,6 @@ void MainWindow::PixelSeedImage(double** image, int num_clusters)
                 }
             }
             imgpoints.belongto[i] = c_id;
-            // std::cout << imgpoints.belongto[i] << std::endl;
         }
 
         for (int i=0; i<img_size; i++) {
@@ -758,9 +680,7 @@ void MainWindow::PixelSeedImage(double** image, int num_clusters)
         }
         kclusters.UpdateCenter();
         if (kclusters.IsBad()) {
-            // continue;
-            kclusters.PixelInit();
-            round = 0;
+            std::cout << "my name is nansong" << std::endl;
         }
         kclusters.ResetSum();
         round++;
@@ -772,7 +692,6 @@ void MainWindow::PixelSeedImage(double** image, int num_clusters)
             image[i][k] = kclusters.centers[c_id][k];
         }
     }     
-    // Add your code here
 }
 
 

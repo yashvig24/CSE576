@@ -481,7 +481,7 @@ double** MainWindow::ImageCopy(double** image) {
     return result;
 }
 
-double** MainWindow::PaddingImage(double** image, int kernelWidth, int kernelHeight) {
+double** MainWindow::PaddingImage(double** image, int kernelWidth, int kernelHeight, int padding_mode) {
 /*
  * return a padding image
 */    
@@ -489,25 +489,61 @@ double** MainWindow::PaddingImage(double** image, int kernelWidth, int kernelHei
     int khw = (kernelWidth / 2); //kernelHalfWidth
     int new_width = imageWidth + 2 * khw;
     int new_height = imageHeight + 2 * khh;
-    // std::cout << "imageWidth: " << imageWidth << " imageHeight: " << imageHeight<< std::endl;
-    // std::cout << "new_width: " << new_width << " new_height: " << new_height<< std::endl;
     double** image_pad = new double* [new_height*new_width];
     for (int i = 0; i < new_height*new_width; i++) {
         image_pad[i] = new double[3];
         image_pad[i][0] = image_pad[i][1] = image_pad[i][2] = 0.0;
     }
-    // std::cout << "2" << image_pad << std::endl;
     for (int i = 0; i < imageHeight; i++) {
         int i_pad = i + khh;
         for (int j = 0; j < imageWidth; j++) {
             int j_pad = j + khw;
-//            std::cout << "debug" << std::endl;
             image_pad[i_pad*new_width + j_pad][0] = image[i*imageWidth + j][0];
             image_pad[i_pad*new_width + j_pad][1] = image[i*imageWidth + j][1];
             image_pad[i_pad*new_width + j_pad][2] = image[i*imageWidth + j][2];
         }
     }
-    // std::cout << "3" << std::endl;
+
+    if (padding_mode == 1) // fixed padding
+    {
+        for (int i = 0; i < khh; i++) {
+            int i_pad = i + khh;
+            for (int j = 0; j < imageWidth; j++) {
+                int j_pad = j + khw;
+                image_pad[i*new_width + j_pad][0] = image[i*imageWidth + j][0];
+                image_pad[i*new_width + j_pad][1] = image[i*imageWidth + j][1];
+                image_pad[i*new_width + j_pad][2] = image[i*imageWidth + j][2];
+            }
+        }    
+        for (int i = imageHeight - khh; i < imageHeight; i++) {
+            int i_pad = i + 2*khh;
+            for (int j = 0; j < imageWidth; j++) {
+                int j_pad = j + khw;
+                image_pad[i_pad*new_width + j_pad][0] = image[i*imageWidth + j][0];
+                image_pad[i_pad*new_width + j_pad][1] = image[i*imageWidth + j][1];
+                image_pad[i_pad*new_width + j_pad][2] = image[i*imageWidth + j][2];
+            }
+        }
+        for (int i = 0; i < imageHeight; i++) {
+            int i_pad = i + khh;
+            for (int j = 0; j < khw; j++) {
+                int j_pad = j;
+                image_pad[i_pad*new_width + j_pad][0] = image[i*imageWidth + j][0];
+                image_pad[i_pad*new_width + j_pad][1] = image[i*imageWidth + j][1];
+                image_pad[i_pad*new_width + j_pad][2] = image[i*imageWidth + j][2];
+            }
+        }
+        for (int i = 0; i < imageHeight; i++) {
+            int i_pad = i + khh;
+            for (int j = imageWidth - khw; j < imageWidth; j++) {
+                int j_pad = j + 2*khw;
+                image_pad[i_pad*new_width + j_pad][0] = image[i*imageWidth + j][0];
+                image_pad[i_pad*new_width + j_pad][1] = image[i*imageWidth + j][1];
+                image_pad[i_pad*new_width + j_pad][2] = image[i*imageWidth + j][2];
+            }
+        } 
+    }
+
     return image_pad;
 }
 

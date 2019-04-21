@@ -32,4 +32,5 @@ class KmeanCluster {
         void UpdateCenter();
         void ResetSum();
         bool IsBad();
+        void ResetCluster(int id); 
 };

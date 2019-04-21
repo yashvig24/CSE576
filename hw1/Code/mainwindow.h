@@ -65,7 +65,7 @@ private:
 private slots:
     double* getPixel(double** image, int x, int y);
     double** ImageCopy(double** image);
-    double** PaddingImage(double** image, int kernelWidth, int kernelHeight);
+    double** PaddingImage(double** image, int kernelWidth, int kernelHeight, int padding_mode);
     void OpenImage();
     void SaveImage();
     void SaveDisplayImage();

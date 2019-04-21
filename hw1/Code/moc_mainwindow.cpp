@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[43];
-    char stringdata0[504];
+    QByteArrayData data[44];
+    char stringdata0[517];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -43,53 +43,55 @@ QT_MOC_LITERAL(8, 48, 9), // "ImageCopy"
 QT_MOC_LITERAL(9, 58, 12), // "PaddingImage"
 QT_MOC_LITERAL(10, 71, 11), // "kernelWidth"
 QT_MOC_LITERAL(11, 83, 12), // "kernelHeight"
-QT_MOC_LITERAL(12, 96, 9), // "OpenImage"
-QT_MOC_LITERAL(13, 106, 9), // "SaveImage"
-QT_MOC_LITERAL(14, 116, 16), // "SaveDisplayImage"
-QT_MOC_LITERAL(15, 133, 10), // "ResetImage"
-QT_MOC_LITERAL(16, 144, 11), // "ToggleImage"
-QT_MOC_LITERAL(17, 156, 8), // "AddNoise"
-QT_MOC_LITERAL(18, 165, 15), // "BlackWhiteImage"
-QT_MOC_LITERAL(19, 181, 13), // "MeanBlurImage"
-QT_MOC_LITERAL(20, 195, 17), // "GaussianBlurImage"
-QT_MOC_LITERAL(21, 213, 17), // "FirstDerivImage_x"
-QT_MOC_LITERAL(22, 231, 17), // "FirstDerivImage_y"
-QT_MOC_LITERAL(23, 249, 16), // "SecondDerivImage"
-QT_MOC_LITERAL(24, 266, 12), // "SharpenImage"
-QT_MOC_LITERAL(25, 279, 10), // "SobelImage"
-QT_MOC_LITERAL(26, 290, 9), // "HalfImage"
-QT_MOC_LITERAL(27, 300, 11), // "RotateImage"
-QT_MOC_LITERAL(28, 312, 10), // "Brightness"
-QT_MOC_LITERAL(29, 323, 3), // "val"
-QT_MOC_LITERAL(30, 327, 4), // "Zoom"
-QT_MOC_LITERAL(31, 332, 6), // "Scroll"
-QT_MOC_LITERAL(32, 339, 14), // "BilateralImage"
-QT_MOC_LITERAL(33, 354, 14), // "FindPeaksImage"
-QT_MOC_LITERAL(34, 369, 11), // "MedianImage"
-QT_MOC_LITERAL(35, 381, 10), // "HoughImage"
-QT_MOC_LITERAL(36, 392, 11), // "SmartKMeans"
-QT_MOC_LITERAL(37, 404, 15), // "RandomSeedImage"
-QT_MOC_LITERAL(38, 420, 14), // "PixelSeedImage"
-QT_MOC_LITERAL(39, 435, 18), // "HistogramSeedImage"
-QT_MOC_LITERAL(40, 454, 20), // "ConvertQImage2Double"
-QT_MOC_LITERAL(41, 475, 20), // "ConvertDouble2QImage"
-QT_MOC_LITERAL(42, 496, 7) // "QImage*"
+QT_MOC_LITERAL(12, 96, 12), // "padding_mode"
+QT_MOC_LITERAL(13, 109, 9), // "OpenImage"
+QT_MOC_LITERAL(14, 119, 9), // "SaveImage"
+QT_MOC_LITERAL(15, 129, 16), // "SaveDisplayImage"
+QT_MOC_LITERAL(16, 146, 10), // "ResetImage"
+QT_MOC_LITERAL(17, 157, 11), // "ToggleImage"
+QT_MOC_LITERAL(18, 169, 8), // "AddNoise"
+QT_MOC_LITERAL(19, 178, 15), // "BlackWhiteImage"
+QT_MOC_LITERAL(20, 194, 13), // "MeanBlurImage"
+QT_MOC_LITERAL(21, 208, 17), // "GaussianBlurImage"
+QT_MOC_LITERAL(22, 226, 17), // "FirstDerivImage_x"
+QT_MOC_LITERAL(23, 244, 17), // "FirstDerivImage_y"
+QT_MOC_LITERAL(24, 262, 16), // "SecondDerivImage"
+QT_MOC_LITERAL(25, 279, 12), // "SharpenImage"
+QT_MOC_LITERAL(26, 292, 10), // "SobelImage"
+QT_MOC_LITERAL(27, 303, 9), // "HalfImage"
+QT_MOC_LITERAL(28, 313, 11), // "RotateImage"
+QT_MOC_LITERAL(29, 325, 10), // "Brightness"
+QT_MOC_LITERAL(30, 336, 3), // "val"
+QT_MOC_LITERAL(31, 340, 4), // "Zoom"
+QT_MOC_LITERAL(32, 345, 6), // "Scroll"
+QT_MOC_LITERAL(33, 352, 14), // "BilateralImage"
+QT_MOC_LITERAL(34, 367, 14), // "FindPeaksImage"
+QT_MOC_LITERAL(35, 382, 11), // "MedianImage"
+QT_MOC_LITERAL(36, 394, 10), // "HoughImage"
+QT_MOC_LITERAL(37, 405, 11), // "SmartKMeans"
+QT_MOC_LITERAL(38, 417, 15), // "RandomSeedImage"
+QT_MOC_LITERAL(39, 433, 14), // "PixelSeedImage"
+QT_MOC_LITERAL(40, 448, 18), // "HistogramSeedImage"
+QT_MOC_LITERAL(41, 467, 20), // "ConvertQImage2Double"
+QT_MOC_LITERAL(42, 488, 20), // "ConvertDouble2QImage"
+QT_MOC_LITERAL(43, 509, 7) // "QImage*"
 
     },
     "MainWindow\0getPixel\0double*\0\0double**\0"
     "image\0x\0y\0ImageCopy\0PaddingImage\0"
-    "kernelWidth\0kernelHeight\0OpenImage\0"
-    "SaveImage\0SaveDisplayImage\0ResetImage\0"
-    "ToggleImage\0AddNoise\0BlackWhiteImage\0"
-    "MeanBlurImage\0GaussianBlurImage\0"
-    "FirstDerivImage_x\0FirstDerivImage_y\0"
-    "SecondDerivImage\0SharpenImage\0SobelImage\0"
-    "HalfImage\0RotateImage\0Brightness\0val\0"
-    "Zoom\0Scroll\0BilateralImage\0FindPeaksImage\0"
-    "MedianImage\0HoughImage\0SmartKMeans\0"
-    "RandomSeedImage\0PixelSeedImage\0"
-    "HistogramSeedImage\0ConvertQImage2Double\0"
-    "ConvertDouble2QImage\0QImage*"
+    "kernelWidth\0kernelHeight\0padding_mode\0"
+    "OpenImage\0SaveImage\0SaveDisplayImage\0"
+    "ResetImage\0ToggleImage\0AddNoise\0"
+    "BlackWhiteImage\0MeanBlurImage\0"
+    "GaussianBlurImage\0FirstDerivImage_x\0"
+    "FirstDerivImage_y\0SecondDerivImage\0"
+    "SharpenImage\0SobelImage\0HalfImage\0"
+    "RotateImage\0Brightness\0val\0Zoom\0Scroll\0"
+    "BilateralImage\0FindPeaksImage\0MedianImage\0"
+    "HoughImage\0SmartKMeans\0RandomSeedImage\0"
+    "PixelSeedImage\0HistogramSeedImage\0"
+    "ConvertQImage2Double\0ConvertDouble2QImage\0"
+    "QImage*"
 };
 #undef QT_MOC_LITERAL
 
@@ -109,41 +111,41 @@ static const uint qt_meta_data_MainWindow[] = {
  // slots: name, argc, parameters, tag, flags
        1,    3,  174,    3, 0x08 /* Private */,
        8,    1,  181,    3, 0x08 /* Private */,
-       9,    3,  184,    3, 0x08 /* Private */,
-      12,    0,  191,    3, 0x08 /* Private */,
-      13,    0,  192,    3, 0x08 /* Private */,
-      14,    0,  193,    3, 0x08 /* Private */,
-      15,    0,  194,    3, 0x08 /* Private */,
-      16,    0,  195,    3, 0x08 /* Private */,
-      17,    0,  196,    3, 0x08 /* Private */,
-      18,    0,  197,    3, 0x08 /* Private */,
-      19,    0,  198,    3, 0x08 /* Private */,
-      20,    0,  199,    3, 0x08 /* Private */,
-      21,    0,  200,    3, 0x08 /* Private */,
-      22,    0,  201,    3, 0x08 /* Private */,
-      23,    0,  202,    3, 0x08 /* Private */,
-      24,    0,  203,    3, 0x08 /* Private */,
-      25,    0,  204,    3, 0x08 /* Private */,
-      26,    0,  205,    3, 0x08 /* Private */,
-      27,    0,  206,    3, 0x08 /* Private */,
-      28,    1,  207,    3, 0x08 /* Private */,
-      30,    1,  210,    3, 0x08 /* Private */,
-      31,    1,  213,    3, 0x08 /* Private */,
-      32,    0,  216,    3, 0x08 /* Private */,
-      33,    0,  217,    3, 0x08 /* Private */,
-      34,    0,  218,    3, 0x08 /* Private */,
-      35,    0,  219,    3, 0x08 /* Private */,
-      36,    0,  220,    3, 0x08 /* Private */,
-      37,    0,  221,    3, 0x08 /* Private */,
-      38,    0,  222,    3, 0x08 /* Private */,
-      39,    0,  223,    3, 0x08 /* Private */,
-      40,    1,  224,    3, 0x08 /* Private */,
-      41,    1,  227,    3, 0x08 /* Private */,
+       9,    4,  184,    3, 0x08 /* Private */,
+      13,    0,  193,    3, 0x08 /* Private */,
+      14,    0,  194,    3, 0x08 /* Private */,
+      15,    0,  195,    3, 0x08 /* Private */,
+      16,    0,  196,    3, 0x08 /* Private */,
+      17,    0,  197,    3, 0x08 /* Private */,
+      18,    0,  198,    3, 0x08 /* Private */,
+      19,    0,  199,    3, 0x08 /* Private */,
+      20,    0,  200,    3, 0x08 /* Private */,
+      21,    0,  201,    3, 0x08 /* Private */,
+      22,    0,  202,    3, 0x08 /* Private */,
+      23,    0,  203,    3, 0x08 /* Private */,
+      24,    0,  204,    3, 0x08 /* Private */,
+      25,    0,  205,    3, 0x08 /* Private */,
+      26,    0,  206,    3, 0x08 /* Private */,
+      27,    0,  207,    3, 0x08 /* Private */,
+      28,    0,  208,    3, 0x08 /* Private */,
+      29,    1,  209,    3, 0x08 /* Private */,
+      31,    1,  212,    3, 0x08 /* Private */,
+      32,    1,  215,    3, 0x08 /* Private */,
+      33,    0,  218,    3, 0x08 /* Private */,
+      34,    0,  219,    3, 0x08 /* Private */,
+      35,    0,  220,    3, 0x08 /* Private */,
+      36,    0,  221,    3, 0x08 /* Private */,
+      37,    0,  222,    3, 0x08 /* Private */,
+      38,    0,  223,    3, 0x08 /* Private */,
+      39,    0,  224,    3, 0x08 /* Private */,
+      40,    0,  225,    3, 0x08 /* Private */,
+      41,    1,  226,    3, 0x08 /* Private */,
+      42,    1,  229,    3, 0x08 /* Private */,
 
  // slots: parameters
     0x80000000 | 2, 0x80000000 | 4, QMetaType::Int, QMetaType::Int,    5,    6,    7,
     0x80000000 | 4, 0x80000000 | 4,    5,
-    0x80000000 | 4, 0x80000000 | 4, QMetaType::Int, QMetaType::Int,    5,   10,   11,
+    0x80000000 | 4, 0x80000000 | 4, QMetaType::Int, QMetaType::Int, QMetaType::Int,    5,   10,   11,   12,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -160,9 +162,9 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int,   29,
-    QMetaType::Void, QMetaType::Int,   29,
-    QMetaType::Void, QMetaType::Int,   29,
+    QMetaType::Void, QMetaType::Int,   30,
+    QMetaType::Void, QMetaType::Int,   30,
+    QMetaType::Void, QMetaType::Int,   30,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -172,7 +174,7 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, QMetaType::QImage,    5,
-    QMetaType::Void, 0x80000000 | 42,    5,
+    QMetaType::Void, 0x80000000 | 43,    5,
 
        0        // eod
 };
@@ -187,7 +189,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
             if (_a[0]) *reinterpret_cast< double**>(_a[0]) = std::move(_r); }  break;
         case 1: { double** _r = _t->ImageCopy((*reinterpret_cast< double**(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< double***>(_a[0]) = std::move(_r); }  break;
-        case 2: { double** _r = _t->PaddingImage((*reinterpret_cast< double**(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3])));
+        case 2: { double** _r = _t->PaddingImage((*reinterpret_cast< double**(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2])),(*reinterpret_cast< int(*)>(_a[3])),(*reinterpret_cast< int(*)>(_a[4])));
             if (_a[0]) *reinterpret_cast< double***>(_a[0]) = std::move(_r); }  break;
         case 3: _t->OpenImage(); break;
         case 4: _t->SaveImage(); break;
