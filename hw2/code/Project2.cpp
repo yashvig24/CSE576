@@ -4,6 +4,7 @@
 #include <QtGui>
 #include "Matrix.h"
 #include <iostream>
+#include <vector>
 
 
 /*******************************************************************************
@@ -455,8 +456,6 @@ void MainWindow::HarrisCornerDetector(QImage image, double sigma, double thres, 
             setZero(ResMatrix, tmp, r, c, w, h); //setZero if it's not the local maximum;
         }
     }
-    // ConvertDouble2QImage(ResMatrix, &imageDisplay, w, h);
-
     // Once you know the number of corner points allocate an array as follows:
     // Store corners into cornerPts[]
     for (int i=0; i<w*h; i++) {
@@ -465,13 +464,20 @@ void MainWindow::HarrisCornerDetector(QImage image, double sigma, double thres, 
             numCornerPts++;
         }
     }
+    numCornerPts = max(numCornerPts - 4, 0); // eluminate 4 corners and make sure it's valid when processing a single image.
     *cornerPts = new CIntPt [numCornerPts];
     int cnt=0;
     for (int i=0; i<w*h; i++) {
         if(ResMatrix[i]!=0.0){
-            (*cornerPts)[cnt].m_X = i%w;
-            (*cornerPts)[cnt].m_Y = i/w;
-            cnt++;                            
+            int c = i%w;
+            int r = i/w;
+            if ((r==0&&c==0)|| (r==0&&c==w-1) || (r==h-1&&c==0) || (r==h-1&&c==w-1))
+                std::cout<<"cao"<<std::endl;
+            else{
+                (*cornerPts)[cnt].m_Y = r;
+                (*cornerPts)[cnt].m_X = c;
+                cnt++;                            
+            }                
         }
     }    
     // Access the values using: (*cornerPts)[i].m_X = 5.0;
@@ -482,6 +488,7 @@ void MainWindow::HarrisCornerDetector(QImage image, double sigma, double thres, 
 
     // Once you are done finding the corner points, display them on the image
     DrawCornerPoints(*cornerPts, numCornerPts, imageDisplay);
+    // ConvertDouble2QImage(ResMatrix, &imageDisplay, w, h);
 
     delete [] buffer;
     delete [] ResMatrix;
@@ -502,6 +509,14 @@ Find matching corner points between images.
     image1Display - image used to display matches
     image2Display - image used to display matches
 *******************************************************************************/
+double L1Dist(double* p1, double* p2) {
+    double sum=0.0;
+    for (int i=0; i<DESC_SIZE; i++) {
+        sum+=fabs(p1[i]-p2[i]);
+    }
+    return sum;
+}
+
 void MainWindow::MatchCornerPoints(QImage image1, CIntPt *cornerPts1, int numCornerPts1,
                              QImage image2, CIntPt *cornerPts2, int numCornerPts2,
                              CMatches **matches, int &numMatches, QImage &image1Display, QImage &image2Display)
@@ -516,6 +531,68 @@ void MainWindow::MatchCornerPoints(QImage image1, CIntPt *cornerPts1, int numCor
 
     // Add your code here for finding the best matches for each point.
 
+    int num_min = numCornerPts1;
+    int num_max = numCornerPts2;
+    CIntPt* Pts_min = cornerPts1;
+    CIntPt* Pts_max = cornerPts2;
+
+    if (numCornerPts1 > numCornerPts2) {
+        num_min = numCornerPts2;
+        num_max = numCornerPts1;
+        Pts_min = cornerPts2;
+        Pts_max = cornerPts1;
+    }
+    std::vector<CIntPt*> matches_vec;
+    for (int i=0; i<num_min; i++) {
+        int match_id = 0;
+        double dist = L1Dist(Pts_min[i].m_Desc, Pts_max[0].m_Desc);
+        for (int j=1; j<num_max; j++) {
+            if (L1Dist(Pts_min[i].m_Desc, Pts_max[j].m_Desc) < dist){
+                match_id = j;
+                dist = L1Dist(Pts_min[i].m_Desc, Pts_max[j].m_Desc);
+            }
+        } 
+
+        if (dist < 100) {
+            CIntPt* pair = new CIntPt [2];
+            pair[0] = Pts_min[i];
+            pair[1] = Pts_max[match_id];
+            matches_vec.push_back(pair);
+            numMatches++;
+        }
+    }
+    std::cout << "numMatches = "<< numMatches <<std::endl;
+    std::cout << "vector_size = "<< matches_vec.size() <<std::endl;
+    *matches = new CMatches [numMatches];
+    int i=0;
+    for (auto pair = matches_vec.begin(); pair != matches_vec.end(); ++pair) {
+        std::cout<<"round "<<i<<std::endl;
+        (*matches)[i].m_X1 = (*pair)[0].m_X;
+        (*matches)[i].m_Y1 = (*pair)[0].m_Y;
+        (*matches)[i].m_X2 = (*pair)[1].m_X;
+        (*matches)[i].m_Y2 = (*pair)[1].m_Y;
+        if (numCornerPts1 > numCornerPts2) {
+            (*matches)[i].m_X1 = (*pair)[1].m_X;
+            (*matches)[i].m_Y1 = (*pair)[1].m_Y;
+            (*matches)[i].m_X2 = (*pair)[0].m_X;
+            (*matches)[i].m_Y2 = (*pair)[0].m_Y;
+        }
+        i++;
+    }
+    // for (int i=0; i<numMatches; i++) {
+    //     CIntPt* pair = matches_vec.pop_back();
+    //     *matches[i].m_X1 = pair[0].m_X;
+    //     *matches[i].m_Y1 = pair[0].m_Y;
+    //     *matches[i].m_X2 = pair[1].m_X;
+    //     *matches[i].m_Y2 = pair[1].m_Y;
+    //     if (numCornerPts1 > numCornerPts2) {
+    //         *matches[i].m_X1 = pair[1].m_X;
+    //         *matches[i].m_Y1 = pair[1].m_Y;
+    //         *matches[i].m_X2 = pair[0].m_X;
+    //         *matches[i].m_Y2 = pair[0].m_Y;
+    //     }
+    // }
+    
     // Once you uknow the number of matches allocate an array as follows:
     // *matches = new CMatches [numMatches];
     //
@@ -523,6 +600,7 @@ void MainWindow::MatchCornerPoints(QImage image1, CIntPt *cornerPts1, int numCor
     // The position of the corner point in image 2 is (m_X2, m_Y2)
 
     // Draw the matches
+    std::cout<<"it's ok"<<std::endl;
     DrawMatches(*matches, numMatches, image1Display, image2Display);
 }
 
