@@ -235,7 +235,7 @@ void MainWindow::Convolution(double** image, double *kernel, int kernelWidth, in
         for (int c = 0; c < imageWidth; c++) {
             
             double rgb[3];
-            rgb[0] = rgb[1] = rgb[2] = 0.0;
+            rgb[0] = rgb[1] s= rgb[2] = 0.0;
 
             for(int rd = -khh; rd <= khh; rd++) {
                 int i_pad = r + rd + khh;
