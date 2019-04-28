@@ -94,7 +94,11 @@ private slots:
     double* FirstDerivImage_y(double* image, int w, int h, double sigma);
     void ConvertDouble2QImage(double* Image, QImage *image, int imageWidth, int imageHeight);
     QRgb restrictColor(double red, double green, double blue);
+
     double* ImageMul(double* Ix, double* Iy, int w, int h);
+    CMatches* getInliers(double h[3][3], CMatches *matches, int numMatches, double inlierThreshold, int maxInliers);
+    CMatches* genRandomMatches(CMatches *matches, int max);
+
 };
 
 #endif // MAINWINDOW_H

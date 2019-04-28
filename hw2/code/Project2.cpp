@@ -5,7 +5,8 @@
 #include "Matrix.h"
 #include <iostream>
 #include <vector>
-
+#include <set>
+#include <unordered_set>
 
 /*******************************************************************************
     The following are helper routines with code already written.
@@ -389,16 +390,10 @@ bool MainWindow::ComputeHomography(CMatches *matches, int numMatches, double h[3
 *******************************************************************************/
 
 
+
 /*******************************************************************************
-Detect Harris corners.
-    image - input image
-    sigma - standard deviation of Gaussian used to blur corner detector
-    thres - Threshold for detecting corners
-    cornerPts - returned corner points
-    numCornerPts - number of corner points returned
-    imageDisplay - image returned to display (for debugging)
+Helper function to set non-maximum pixels to be zero for NMS
 *******************************************************************************/
-// helper function to do NMS
 void setZero(double* ResMatrix, double* tmp, int r, int c, int w, int h) {
     for (int rd = -2; rd < 2; rd++) {
         for (int cd = -2; cd <2; cd++) {
@@ -409,7 +404,15 @@ void setZero(double* ResMatrix, double* tmp, int r, int c, int w, int h) {
         }
     }
 }
-
+/*******************************************************************************
+Detect Harris corners.
+    image - input image
+    sigma - standard deviation of Gaussian used to blur corner detector
+    thres - Threshold for detecting corners
+    cornerPts - returned corner points
+    numCornerPts - number of corner points returned
+    imageDisplay - image returned to display (for debugging)
+*******************************************************************************/
 void MainWindow::HarrisCornerDetector(QImage image, double sigma, double thres, CIntPt **cornerPts, int &numCornerPts, QImage &imageDisplay)
 {
     int r, c;
@@ -428,7 +431,7 @@ void MainWindow::HarrisCornerDetector(QImage image, double sigma, double thres, 
 
             buffer[r*w + c] = (double) qGreen(pixel);
         }
-    
+
     // Write your Harris corner detection code here.
     double* Ix = FirstDerivImage_x(buffer, w, h, sigma);
     double* Iy = FirstDerivImage_y(buffer, w, h, sigma);
@@ -445,8 +448,7 @@ void MainWindow::HarrisCornerDetector(QImage image, double sigma, double thres, 
         if (ResMatrix[i] < thres)
             ResMatrix[i] = 0;
     }
-
-    // NMS 
+    // NMS
     double *tmp = new double [w*h];
     memcpy(tmp, ResMatrix, w*h*sizeof(double));
     for(r=0;r<h;r++)
@@ -456,7 +458,6 @@ void MainWindow::HarrisCornerDetector(QImage image, double sigma, double thres, 
             setZero(ResMatrix, tmp, r, c, w, h); //setZero if it's not the local maximum;
         }
     }
-    // Once you know the number of corner points allocate an array as follows:
     // Store corners into cornerPts[]
     for (int i=0; i<w*h; i++) {
         if(ResMatrix[i]!=0.0){
@@ -464,38 +465,38 @@ void MainWindow::HarrisCornerDetector(QImage image, double sigma, double thres, 
             numCornerPts++;
         }
     }
-    numCornerPts = max(numCornerPts - 4, 0); // eluminate 4 corners and make sure it's valid when processing a single image.
+    numCornerPts = max(numCornerPts - 4, 0); // eliminate 4 corners and make sure it's valid when processing a single image.
     *cornerPts = new CIntPt [numCornerPts];
     int cnt=0;
     for (int i=0; i<w*h; i++) {
         if(ResMatrix[i]!=0.0){
             int c = i%w;
             int r = i/w;
-            if ((r==0&&c==0)|| (r==0&&c==w-1) || (r==h-1&&c==0) || (r==h-1&&c==w-1))
-                std::cout<<"cao"<<std::endl;
+            if ((r==0&&c==0)|| (r==0&&c==w-1) || (r==h-1&&c==0) || (r==h-1&&c==w-1))  // eliminate 4 corners
+                std::cout<<"does not count"<<std::endl;
             else{
                 (*cornerPts)[cnt].m_Y = r;
                 (*cornerPts)[cnt].m_X = c;
-                cnt++;                            
-            }                
+                cnt++;
+            }
         }
-    }    
-    // Access the values using: (*cornerPts)[i].m_X = 5.0;
-    //
-    // The position of the corner point is (m_X, m_Y)
-    // The descriptor of the corner point is stored in m_Desc
-    // The length of the descriptor is m_DescSize, if m_DescSize = 0, then it is not valid.
-
-    // Once you are done finding the corner points, display them on the image
+    }
     DrawCornerPoints(*cornerPts, numCornerPts, imageDisplay);
-    // ConvertDouble2QImage(ResMatrix, &imageDisplay, w, h);
-
+    // ConvertDouble2QImage(ResMatrix, &imageDisplay, w, h);  // to visulize temporal variables to help debug
     delete [] buffer;
     delete [] ResMatrix;
     delete [] tmp;
 }
-
-
+/*******************************************************************************
+Helper function to compute L1 norm.
+*******************************************************************************/
+double L1Dist(double* p1, double* p2) {
+    double sum=0.0;
+    for (int i=0; i<DESC_SIZE; i++) {
+        sum+=fabs(p1[i]-p2[i]);
+    }
+    return sum;
+}
 /*******************************************************************************
 Find matching corner points between images.
     image1 - first input image
@@ -509,14 +510,6 @@ Find matching corner points between images.
     image1Display - image used to display matches
     image2Display - image used to display matches
 *******************************************************************************/
-double L1Dist(double* p1, double* p2) {
-    double sum=0.0;
-    for (int i=0; i<DESC_SIZE; i++) {
-        sum+=fabs(p1[i]-p2[i]);
-    }
-    return sum;
-}
-
 void MainWindow::MatchCornerPoints(QImage image1, CIntPt *cornerPts1, int numCornerPts1,
                              QImage image2, CIntPt *cornerPts2, int numCornerPts2,
                              CMatches **matches, int &numMatches, QImage &image1Display, QImage &image2Display)
@@ -524,24 +517,21 @@ void MainWindow::MatchCornerPoints(QImage image1, CIntPt *cornerPts1, int numCor
     numMatches = 0;
 
     // Compute the descriptors for each corner point.
-    // You can access the descriptor for each corner point using cornerPts1[i].m_Desc[j].
-    // If cornerPts1[i].m_DescSize = 0, it was not able to compute a descriptor for that point
+
     ComputeDescriptors(image1, cornerPts1, numCornerPts1);
     ComputeDescriptors(image2, cornerPts2, numCornerPts2);
-
-    // Add your code here for finding the best matches for each point.
 
     int num_min = numCornerPts1;
     int num_max = numCornerPts2;
     CIntPt* Pts_min = cornerPts1;
     CIntPt* Pts_max = cornerPts2;
-
     if (numCornerPts1 > numCornerPts2) {
         num_min = numCornerPts2;
         num_max = numCornerPts1;
         Pts_min = cornerPts2;
         Pts_max = cornerPts1;
     }
+
     std::vector<CIntPt*> matches_vec;
     for (int i=0; i<num_min; i++) {
         int match_id = 0;
@@ -551,9 +541,8 @@ void MainWindow::MatchCornerPoints(QImage image1, CIntPt *cornerPts1, int numCor
                 match_id = j;
                 dist = L1Dist(Pts_min[i].m_Desc, Pts_max[j].m_Desc);
             }
-        } 
-
-        if (dist < 100) {
+        }
+        if (dist < 50) {  //threshold for matching
             CIntPt* pair = new CIntPt [2];
             pair[0] = Pts_min[i];
             pair[1] = Pts_max[match_id];
@@ -561,12 +550,11 @@ void MainWindow::MatchCornerPoints(QImage image1, CIntPt *cornerPts1, int numCor
             numMatches++;
         }
     }
-    std::cout << "numMatches = "<< numMatches <<std::endl;
-    std::cout << "vector_size = "<< matches_vec.size() <<std::endl;
+    
     *matches = new CMatches [numMatches];
     int i=0;
     for (auto pair = matches_vec.begin(); pair != matches_vec.end(); ++pair) {
-        std::cout<<"round "<<i<<std::endl;
+        // std::cout<<"round "<<i<<std::endl;
         (*matches)[i].m_X1 = (*pair)[0].m_X;
         (*matches)[i].m_Y1 = (*pair)[0].m_Y;
         (*matches)[i].m_X2 = (*pair)[1].m_X;
@@ -579,28 +567,6 @@ void MainWindow::MatchCornerPoints(QImage image1, CIntPt *cornerPts1, int numCor
         }
         i++;
     }
-    // for (int i=0; i<numMatches; i++) {
-    //     CIntPt* pair = matches_vec.pop_back();
-    //     *matches[i].m_X1 = pair[0].m_X;
-    //     *matches[i].m_Y1 = pair[0].m_Y;
-    //     *matches[i].m_X2 = pair[1].m_X;
-    //     *matches[i].m_Y2 = pair[1].m_Y;
-    //     if (numCornerPts1 > numCornerPts2) {
-    //         *matches[i].m_X1 = pair[1].m_X;
-    //         *matches[i].m_Y1 = pair[1].m_Y;
-    //         *matches[i].m_X2 = pair[0].m_X;
-    //         *matches[i].m_Y2 = pair[0].m_Y;
-    //     }
-    // }
-    
-    // Once you uknow the number of matches allocate an array as follows:
-    // *matches = new CMatches [numMatches];
-    //
-    // The position of the corner point in iamge 1 is (m_X1, m_Y1)
-    // The position of the corner point in image 2 is (m_X2, m_Y2)
-
-    // Draw the matches
-    std::cout<<"it's ok"<<std::endl;
     DrawMatches(*matches, numMatches, image1Display, image2Display);
 }
 
@@ -612,9 +578,13 @@ Project a point (x1, y1) using the homography transformation h
 *******************************************************************************/
 void MainWindow::Project(double x1, double y1, double &x2, double &y2, double h[3][3])
 {
-    // Add your code here.
-}
+    double u = h[0][0]*x1 + h[0][1]*y1 + h[0][2]*1;
+    double v = h[1][0]*x1 + h[1][1]*y1 + h[1][2]*1;
+    double w = h[2][0]*x1 + h[2][1]*y1 + h[2][2]*1;
 
+    x2 = (u / w);
+    y2 = (v / w);  //why we need to divide w ???????
+}
 /*******************************************************************************
 Count the number of inliers given a homography.  This is a helper function for RANSAC.
     h - input homography used to project points (image1 -> image2
@@ -626,12 +596,50 @@ Count the number of inliers given a homography.  This is a helper function for R
 *******************************************************************************/
 int MainWindow::ComputeInlierCount(double h[3][3], CMatches *matches, int numMatches, double inlierThreshold)
 {
-    // Add your code here.
-
-    return 0;
+    int numInliers = 0;
+    double x2Projected, y2Projected, distance;
+    for (int i = 0; i < numMatches; i++) {
+        Project(matches[i].m_X1, matches[i].m_Y1, x2Projected, y2Projected, h);
+        distance = sqrt(pow(matches[i].m_X2-x2Projected, 2) + pow(matches[i].m_Y2-y2Projected, 2));
+        if (distance < inlierThreshold)
+            numInliers++;
+    }
+    return numInliers;
 }
-
-
+/*******************************************************************************
+Helper function to generate random submatches
+*******************************************************************************/
+CMatches* MainWindow::genRandomMatches(CMatches *matches, int max) {
+    std::unordered_set<int> HashSet;
+    while (HashSet.size() < 4) {        //random genrate 4 indices of matches.
+        HashSet.insert(rand()%max);
+    }
+    CMatches *subMatches = new CMatches [4];
+    int cnt = 0;
+    for (auto itr = HashSet.begin(); itr != HashSet.end(); itr++) {
+        subMatches[cnt] = matches[*itr];
+        cnt++;
+    }
+    return subMatches;
+}
+/*******************************************************************************
+Helper function to get final Matches
+*******************************************************************************/
+CMatches* MainWindow::getInliers(double h[3][3], CMatches *matches, int numMatches, double inlierThreshold, int maxInliers)
+{
+    double x2Projected, y2Projected, distance;
+    CMatches* finalMatches = new CMatches [maxInliers];
+    int cnt = 0;
+    for (int i = 0; i < numMatches; i++) {
+        Project(matches[i].m_X1, matches[i].m_Y1, x2Projected, y2Projected, h);
+        distance = sqrt(pow(matches[i].m_X2-x2Projected, 2) + pow(matches[i].m_Y2-y2Projected, 2));
+        if (distance < inlierThreshold){
+            finalMatches[cnt] = matches[i];
+            cnt++;
+        }
+    }
+    return finalMatches;
+}
 /*******************************************************************************
 Compute homography transformation between images using RANSAC.
     matches - set of matching points between images
@@ -647,10 +655,23 @@ void MainWindow::RANSAC(CMatches *matches, int numMatches, int numIterations, do
                         double hom[3][3], double homInv[3][3], QImage &image1Display, QImage &image2Display)
 {
     // Add your code here.
-
+    int maxInliers = 0;
+    CMatches* bestMatches;
+    for (int i=0; i<numIterations; i++) {
+        CMatches* subMatches = genRandomMatches(matches, numMatches);
+        ComputeHomography(subMatches, 4, hom, true);
+        int numInliers = ComputeInlierCount(hom, matches, numMatches, inlierThreshold);
+        if (numInliers > maxInliers) {
+            bestMatches = subMatches;
+            maxInliers = numInliers;
+        }
+    }
+    ComputeHomography(bestMatches, 4, hom, true);
+    CMatches* finalMatches = getInliers(hom, matches, numMatches, inlierThreshold, maxInliers);
+    ComputeHomography(finalMatches, maxInliers, hom, true);
+    ComputeHomography(finalMatches, maxInliers, homInv, false);
     // After you're done computing the inliers, display the corresponding matches.
-    //DrawMatches(inliers, numInliers, image1Display, image2Display);
-
+    DrawMatches(finalMatches, maxInliers, image1Display, image2Display);
 }
 
 /*******************************************************************************
@@ -660,7 +681,7 @@ Stitch together two images using the homography transformation
     hom - homography transformation (image1 -> image2)
     homInv - inverse homography transformation (image2 -> image1)
     stitchedImage - returned stitched image
-*******************************************************************************/
+****************s***************************************************************/
 void MainWindow::Stitch(QImage image1, QImage image2, double hom[3][3], double homInv[3][3], QImage &stitchedImage)
 {
     // Width and height of stitchedImage
