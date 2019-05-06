@@ -520,7 +520,8 @@ void MainWindow::MatchCornerPoints(QImage image1, CIntPt *cornerPts1, int numCor
 
     ComputeDescriptors(image1, cornerPts1, numCornerPts1);
     ComputeDescriptors(image2, cornerPts2, numCornerPts2);
-
+    
+    // idea: how to simplify or make this snippet of code more concise?
     int num_min = numCornerPts1;
     int num_max = numCornerPts2;
     CIntPt* Pts_min = cornerPts1;
@@ -550,7 +551,7 @@ void MainWindow::MatchCornerPoints(QImage image1, CIntPt *cornerPts1, int numCor
             numMatches++;
         }
     }
-
+    // idea: how to simplify or make this snippet of code more concise?
     *matches = new CMatches [numMatches];
     int i=0;
     for (auto pair = matches_vec.begin(); pair != matches_vec.end(); ++pair) {
@@ -687,6 +688,28 @@ Stitch together two images using the homography transformation
 I refered the implementation of stitch from github: https://github.com/AtOMiCNebula/UW-CSEP576/
 Specifically, I refered how he computed the size of stitchedImage: ws, hs.
 *******************************************************************************/
+bool IsValid(int stitchedXOffset, int stitchedYOffset, int width, int height, int y, int x) {
+    if (y-stitchedYOffset < height && y-stitchedYOffset >= 0 && x-stitchedXOffset < width && x-stitchedXOffset >= 0)
+        return true;
+    else 
+        return false;
+}
+bool NotZero(QRgb pixel) {
+    if (qRed(pixel) != 0 && qGreen(pixel) != 0 && qBlue(pixel) != 0 )
+    // if (qRed(pixel) > 1 && qGreen(pixel) > 1 && qBlue(pixel) > 1 )
+        return true;
+    else 
+        return false;
+}
+bool NotZero(double* rgb) {
+    if (rgb[0]!=0.0 && rgb[1]!=0.0 && rgb[2]!=0.0){
+    // if (rgb[0]>1 && rgb[1]>1 && rgb[2]>1){
+        // std::cout<<"not zero"<<std::endl;
+        return true;
+    }
+    else 
+        return false;
+}
 void MainWindow::Stitch(QImage image1, QImage image2, double hom[3][3], double homInv[3][3], QImage &stitchedImage)
 {
     // Width and height of stitchedImage
@@ -735,6 +758,12 @@ void MainWindow::Stitch(QImage image1, QImage image2, double hom[3][3], double h
             if (0 <= x2Projected && x2Projected < w2 && 0 <= y2Projected && y2Projected < h2) {
                 double rgb[3];
                 BilinearInterpolation(&image2, x2Projected, y2Projected, rgb);
+                if (NotZero(stitchedImage.pixel(x,y)) && NotZero(rgb)){
+                    QRgb pixel = stitchedImage.pixel(x, y);
+                    rgb[0] = (rgb[0] + (double) qRed(pixel))/2;
+                    rgb[1] = (rgb[1] + (double) qGreen(pixel))/2;
+                    rgb[2] = (rgb[2] + (double) qBlue(pixel))/2;
+                }
                 stitchedImage.setPixel(x, y, qRgb(static_cast<int>(floor(rgb[0])),
                                                   static_cast<int>(floor(rgb[1])),
                                                   static_cast<int>(floor(rgb[2]))));
