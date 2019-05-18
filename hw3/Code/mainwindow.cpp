@@ -372,9 +372,9 @@ void MainWindow::analyzeGLCM(double ***glcm, int num_regions, double *energy, do
     int i, r, c;
     for (i=0; i<num_regions; i++)
     {
-        for (r=0; r<8; r++)
+        for (r=0; r<256; r++)
         {
-            for (c=0; c<8; c++)
+            for (c=0; c<256; c++)
             {
                 energy[i] += pow(glcm[i][r][c], 2);
                 if (glcm[i][r][c] > 0)
@@ -391,7 +391,7 @@ int MainWindow::CleanNoise(int *nimg, int w, int h, int num_regions, int region_
     for (int i=0; i<num_regions; i++)
         transform_dict[i] = i;
     for (int i = 0; i < w*h; i++) 
-        hist[nimg[i]-1]++;
+        hist[nimg[i]]++;
     int cumulative_deduct = 0;
     for (int i = 0; i < num_regions; i++) {
         transform_dict[i] -= cumulative_deduct;
@@ -404,52 +404,6 @@ int MainWindow::CleanNoise(int *nimg, int w, int h, int num_regions, int region_
         nimg[i] = transform_dict[nimg[i]-1] + 1;
     return num_regions - cumulative_deduct;
 }
-// int MainWindow::CleanNoise(int *nimg, int w, int h, int num_regions, int region_thresh)
-// {
-//     //std::vector<double*> regionNum;
-//     // count the size of each region
-//     int r, c;
-//     int* regionNum = new int[num_regions + 1];
-//     for (int i=0; i<num_regions + 1; i++)
-//         regionNum[i] =0;
-
-//     for (r=0; r<h; r++)
-//         for (c=0; c<w; c++)
-//         {
-//             regionNum[nimg[r*w+c]] ++;
-//         }
-
-//     // the regionChangedInd rocord the index of region after thresholding [1-num_regions]
-//     int reginCount = 0;
-//     int * regionChangedInd = new int [num_regions + 1];
-//     for (int i=1; i< num_regions+1; i++)
-//     {
-//         if (regionNum[i] > region_thresh)
-//         {
-//             reginCount++;
-//             regionChangedInd[i] = reginCount;
-//         }
-//         else
-//         {
-//             regionChangedInd[i] = 0;
-//         }
-//     }
-//     //    for (int i=0; i< num_regions+1; i++)
-//     //        std::cout<<i<<" -> "<<regionChangedInd[i]<<endl;
-//     // create the new *nimg
-//     int pos;
-//     for (r=0; r<h; r++)
-//         for (c=0; c<w; c++)
-//         {
-//             pos = r*w + c;
-//             nimg[pos] = regionChangedInd[nimg[pos]];
-//         }
-
-//     delete[] regionNum;
-//     delete[] regionChangedInd;
-
-//     return reginCount;
-// }
 
 void MainWindow::computeCentroid(double **centroid, int num_regions, int *nimg, int w, int h){
     for (int r=0; r<h; r++)
