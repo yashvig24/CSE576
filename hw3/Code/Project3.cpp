@@ -194,7 +194,7 @@ std::vector<double*> MainWindow::ExtractFeatureVector(QImage image)
     // The code for random seed clustering is provided. You are free to use any clustering algorithm of your choice from HW 1
     // Experiment with the num_clusters and max_iterations values to get the best result
 
-    int num_clusters = 5;
+    int num_clusters = 6;
     int max_iterations = 50;
     QImage image_copy = image;
     Clustering(&image_copy,num_clusters,max_iterations);
@@ -226,19 +226,17 @@ std::vector<double*> MainWindow::ExtractFeatureVector(QImage image)
         for (c=0; c<w; c++)
             num_regions = (nimg[r*w+c]>num_regions)? nimg[r*w+c]: num_regions;
 
-    ui->progressBox->append(QString::fromStdString("#regions = "+std::to_string(num_regions)));
-    QApplication::processEvents();
-
     // The resultant image of Step 2 is 'nimg', whose values range from 1 to num_regions
 
     // WRITE YOUR REGION THRESHOLDING AND REFINEMENT CODE HERE
 
-    int region_thresh = 50;
-    num_regions = CleanNoise(nimg, w, h, num_regions, region_thresh);
-    std::cout<<"good CleanNoise"<<std::endl;
+    /***********3.Clean Noise**************/
+    int region_thresh = 80;
+    // num_regions = CleanNoise(nimg, w, h, num_regions, region_thresh);
+    ui->progressBox->append(QString::fromStdString("#regions = "+std::to_string(num_regions)));
+    QApplication::processEvents();
+    std::cout<<"good CleanNoise"<<num_regions<<std::endl;
 
-    /********** STEP 3 **********/    /********** STEP 3 **********/    /********** STEP 3 **********/    /********** STEP 3 **********/
-    /********** STEP 3 **********/    /********** STEP 3 **********/    /********** STEP 3 **********/    /********** STEP 3 **********/
     /********** STEP 3 **********/    /********** STEP 3 **********/    /********** STEP 3 **********/    /********** STEP 3 **********/
 
 
@@ -246,16 +244,20 @@ std::vector<double*> MainWindow::ExtractFeatureVector(QImage image)
     QApplication::processEvents();
 
     // Extract the feature vector of each region
-
+    
+    /***********4.get energy, entropy, contrast from GLCM **************/
+    /***********4.1 map the gray scale pic to 8-scale pic **************/
     QImage img_gray = image;
     BlackWhiteImage(&img_gray);
     int *img_down = (int*)malloc(w*h * sizeof(int));
     memset( img_down, 0, w * h * sizeof( int ) );
     DownSample(img_gray, img_down, w, h);
 
+    /***********4.2 Init GLCM **************/
     double*** glcm = InitGLCM(num_regions, 8); // downsampled to be 8 stages
     std::cout<<"good InitGLCM"<<std::endl;
-
+    
+    /***********4.3 compute 8x8 GLCM from the downsampled pic**************/
     int d_x = 1, d_y = 1;
     for (r=0; r<h; r++)
         for (c=0; c<w; c++)
@@ -266,6 +268,7 @@ std::vector<double*> MainWindow::ExtractFeatureVector(QImage image)
             }
         }
     std::cout<<"good updateGLCM"<<std::endl;
+    /***********4.4 norm GLCM **************/
     normGLCM(glcm, num_regions, 8);
     std::cout<<"good normGLCM"<<std::endl;
 
@@ -274,8 +277,10 @@ std::vector<double*> MainWindow::ExtractFeatureVector(QImage image)
     double* energy = new double[num_regions]();
     double* entropy = new double[num_regions]();
     double* contrast = new double[num_regions]();
+
+    /***********4.5 computer energy, entropy, contrast of GLCM **************/
     analyzeGLCM(glcm, num_regions, energy, entropy, contrast);
-    std::cout<<"good analyzeGLCM"<<std::endl;
+    // std::cout<<"good analyzeGLCM"<<std::endl;
 
     // compute centroid feature of each region
     // 2 parameters
@@ -284,8 +289,10 @@ std::vector<double*> MainWindow::ExtractFeatureVector(QImage image)
     {
         centroid[i] = new double[3]();    //[0]row [1]column [2] number of pixels in that region
     }
+
+    /***********4.6 computeCentroid **************/
     computeCentroid(centroid, num_regions, nimg, w, h);
-    std::cout<<"good computeCentroid"<<std::endl;
+    // std::cout<<"good computeCentroid"<<std::endl;
 
     //bounding box or other representation of where the region is - e.g. x and y co-ordinates of the corners, area of the rectangle etc. (no starter code)
     // 5 parameters
@@ -296,8 +303,10 @@ std::vector<double*> MainWindow::ExtractFeatureVector(QImage image)
         boundry[i][0] = h;
         boundry[i][1] = w;
     }
+
+    /***********4.7 compute Bounding Box **************/
     computeBBox(boundry, nimg, num_regions, w, h);
-    std::cout<<"good computeBBox"<<std::endl;
+    // std::cout<<"good computeBBox"<<std::endl;
 
     // Set length of feature vector according to the number of features you plan to use.
     featurevectorlength = 14;
@@ -312,17 +321,10 @@ std::vector<double*> MainWindow::ExtractFeatureVector(QImage image)
     double *weights = new double [featurevectorlength];
     for (int i=0; i<featurevectorlength; i++)
         weights[i] = 1.0;
-    weights[4] = 50.0;
-    weights[5] = 1.0/10;
-    weights[6] = 1.0/4000;
-    weights[9] = 0.3;
-    weights[10] = 0.3;
-    weights[11] = 0.3;
-    weights[12] = 0.3;
     //normalize weights
     double weights_sum = 0.0;
     for (int i=0; i<featurevectorlength; i++)
-        weights_sum += weights[i] = 1.0;
+        weights_sum += weights[i];
     for (int i=0; i<featurevectorlength; i++)
         weights[i] /= weights_sum;    
     // Sample code for computing the mean RGB values and size of each connected component
@@ -353,8 +355,11 @@ std::vector<double*> MainWindow::ExtractFeatureVector(QImage image)
         for(int n=9; n<9+5; n++)
             features[m][n] = boundry[m][n-9];
         // weighted feature vector
-        for (int i=0; i<featurevectorlength; i++)
+        for (int i=0; i<featurevectorlength; i++){
+            // std::cout << features[m][i] << std::endl;
             features[m][i] *= weights[i];
+        }
+
         featurevector.push_back(features[m]);
     }
 
@@ -384,7 +389,7 @@ double distance2(double* vector1, double* vector2, int length)
     double dist = 0.0;
     for(int i=0; i<length; i++)
         dist += fabs(vector1[i]-vector2[i]);
-    return ((double) rand() / (double) RAND_MAX);
+    return dist;
 }
 
 // Function to calculate the distance between two images
@@ -413,7 +418,8 @@ void MainWindow::CalculateDistances(bool isOne)
             distances[n] = distances[n] + current_distance; // sum of distances between each matching pair of regions
         }
 
-        distances[n] = distances[n] / (double) queryfeature.size(); // normalize by number of matching pairs
+        distances[n] = distances[n] / (double) queryfeature.size() ; // normalize by number of matching pairs
+        // distances[n] = distances[n] / (double) queryfeature.size() + 0.1*fabs(queryfeature.size()-databasefeatures[n].size())/ (double) queryfeature.size(); // normalize by number of matching pairs
 
         // Display the distance values
         ui->progressBox->append(QString::fromStdString("Distance to image "+std::to_string(n+1)+" = "+std::to_string(distances[n])));
